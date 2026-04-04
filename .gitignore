@@ -1,6 +1,3 @@
-# Data — large files, not versioned
-data/online_retail_II.xlsx
-data/online_retail_II.parquet
 
 # MLflow experiment tracking
 mlruns/
