@@ -1,0 +1,49 @@
+data:
+  path: data/online_retail_II.parquet
+  # xlsx kept as source of truth; run excel_to_parquet() once to regenerate
+  xlsx_path: data/online_retail_II.xlsx
+  sheets:
+    - "Year 2009-2010"
+    - "Year 2010-2011"
+
+features:
+  names:
+    - total_orders
+    - total_revenue
+    - mean_order_value
+    - cv_order_value
+    - mean_order_qty
+    - cv_order_qty
+    - mean_basket_size
+    - recency_days
+    - iod_mean
+    - iod_std
+    - revenue_slope
+  min_slope_months: 3          # minimum active months to compute revenue slope
+
+models:
+  contamination: 0.05
+  random_state: 42
+  isolation_forest:
+    n_estimators: 200
+  lof:
+    n_neighbors: 20
+  hbos:
+    n_bins: 30
+
+evaluation:
+  synthetic_frac: 0.05         # fraction of customers injected as anomalies
+  injection_types:
+    - volume_spike
+    - revenue_collapse
+    - frequency_drop
+    - timing_irregular
+  hitl_weekly_sample: 20
+  hitl_n_weeks: 12
+  psi_n_bins: 10
+  psi_slight_threshold: 0.1
+  psi_significant_threshold: 0.2
+
+mlflow:
+  experiment_name: b2b-anomaly-detection
+  tracking_uri: mlruns

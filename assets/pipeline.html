@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B2B Anomaly Detection — Pipeline</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
+  body { margin: 0; background: #07090f; display: flex; justify-content: center; padding: 24px 0; }
+  svg  { font-family: 'JetBrains Mono', 'Fira Mono', monospace; }
+</style>
+</head>
+<body>
+<svg width="1760" height="1080" viewBox="0 0 1760 1080" xmlns="http://www.w3.org/2000/svg">
+<defs>
+
+  <!-- Background pattern -->
+  <pattern id="dots" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
+    <circle cx="14" cy="14" r="0.9" fill="#151f2e" opacity="0.9"/>
+  </pattern>
+
+  <!-- Glow filters -->
+  <filter id="glow-cyan" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="4" result="blur"/>
+    <feFlood flood-color="#00d4ff" flood-opacity="0.35" result="color"/>
+    <feComposite in="color" in2="blur" operator="in" result="shadow"/>
+    <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="glow-amber" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="4" result="blur"/>
+    <feFlood flood-color="#ffaa00" flood-opacity="0.35" result="color"/>
+    <feComposite in="color" in2="blur" operator="in" result="shadow"/>
+    <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="glow-pink" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="4" result="blur"/>
+    <feFlood flood-color="#ff2d78" flood-opacity="0.35" result="color"/>
+    <feComposite in="color" in2="blur" operator="in" result="shadow"/>
+    <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="glow-green" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="4" result="blur"/>
+    <feFlood flood-color="#00e87a" flood-opacity="0.35" result="color"/>
+    <feComposite in="color" in2="blur" operator="in" result="shadow"/>
+    <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="glow-purple" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="4" result="blur"/>
+    <feFlood flood-color="#a855f7" flood-opacity="0.35" result="color"/>
+    <feComposite in="color" in2="blur" operator="in" result="shadow"/>
+    <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="title-glow" x="-10%" y="-40%" width="120%" height="180%">
+    <feGaussianBlur stdDeviation="6" result="blur"/>
+    <feFlood flood-color="#00d4ff" flood-opacity="0.5" result="color"/>
+    <feComposite in="color" in2="blur" operator="in" result="shadow"/>
+    <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+
+  <!-- Arrow markers -->
+  <marker id="arr-cyan"   markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+    <path d="M0,0 L0,6 L8,3 z" fill="#00d4ff"/>
+  </marker>
+  <marker id="arr-amber"  markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+    <path d="M0,0 L0,6 L8,3 z" fill="#ffaa00"/>
+  </marker>
+  <marker id="arr-pink"   markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+    <path d="M0,0 L0,6 L8,3 z" fill="#ff2d78"/>
+  </marker>
+  <marker id="arr-green"  markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+    <path d="M0,0 L0,6 L8,3 z" fill="#00e87a"/>
+  </marker>
+  <marker id="arr-purple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+    <path d="M0,0 L0,6 L8,3 z" fill="#a855f7"/>
+  </marker>
+  <marker id="arr-muted"  markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+    <path d="M0,0 L0,6 L8,3 z" fill="#3a5068"/>
+  </marker>
+
+  <!-- Card gradient overlays -->
+  <linearGradient id="card-fade" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.04"/>
+    <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+  </linearGradient>
+
+</defs>
+
+<!-- ═══════════════════════════════════════════════════════════ BACKGROUND -->
+<rect width="1760" height="1080" fill="#07090f"/>
+<rect width="1760" height="1080" fill="url(#dots)"/>
+
+<!-- Lane separators -->
+<line x1="438" y1="90" x2="438" y2="1050" stroke="#151f2e" stroke-width="1" stroke-dasharray="4,6"/>
+<line x1="878" y1="90" x2="878" y2="1050" stroke="#151f2e" stroke-width="1" stroke-dasharray="4,6"/>
+<line x1="1318" y1="90" x2="1318" y2="1050" stroke="#151f2e" stroke-width="1" stroke-dasharray="4,6"/>
+
+<!-- ═══════════════════════════════════════════════════════════ TITLE -->
+<rect x="20" y="12" width="1720" height="62" rx="8" fill="#0c1520" opacity="0.9"/>
+<line x1="20" y1="74" x2="1740" y2="74" stroke="#00d4ff" stroke-width="1.2" opacity="0.4"/>
+
+<text x="880" y="44" text-anchor="middle" font-size="20" font-weight="700" fill="#00d4ff" filter="url(#title-glow)" letter-spacing="3">
+  B2B CUSTOMER BEHAVIORAL ANOMALY DETECTION
+</text>
+<text x="880" y="64" text-anchor="middle" font-size="11" fill="#3a5068" letter-spacing="1">
+  UCI Online Retail II  ·  1,067,371 raw transactions  ·  5,878 customers  ·  11 behavioral features  ·  3 detectors + ensemble
+</text>
+
+<!-- Lane headers -->
+<text x="219" y="95" text-anchor="middle" font-size="10" font-weight="600" fill="#00d4ff" opacity="0.5" letter-spacing="2">01 · INGEST</text>
+<text x="658" y="95" text-anchor="middle" font-size="10" font-weight="600" fill="#ffaa00" opacity="0.5" letter-spacing="2">02 · FEATURES + PREP</text>
+<text x="1098" y="95" text-anchor="middle" font-size="10" font-weight="600" fill="#ff2d78" opacity="0.5" letter-spacing="2">03 · MODELS + ENSEMBLE</text>
+<text x="1538" y="95" text-anchor="middle" font-size="10" font-weight="600" fill="#00e87a" opacity="0.5" letter-spacing="2">04 · EVALUATE + TRACK</text>
+
+
+<!-- ═══════════════════════════════════════════════════════════ LANE 1 — INGEST -->
+
+<!-- Card: raw data -->
+<g filter="url(#glow-cyan)">
+  <rect x="30" y="108" width="398" height="96" rx="8" fill="#0c1824" stroke="#00d4ff" stroke-width="1.4"/>
+  <rect x="30" y="108" width="398" height="96" rx="8" fill="url(#card-fade)"/>
+  <rect x="30" y="108" width="398" height="7"  rx="4" fill="#00d4ff" opacity="0.8"/>
+</g>
+<text x="50"  y="134" font-size="12" font-weight="700" fill="#dce8f5">online_retail_II.xlsx</text>
+<text x="416" y="126" text-anchor="end" font-size="9"  fill="#00d4ff" opacity="0.6">data/</text>
+<text x="50"  y="153" font-size="10" fill="#3a5068">2 sheets  ·  1,067,371 rows  ·  8 columns</text>
+<text x="50"  y="170" font-size="10" fill="#3a5068">Invoice · StockCode · Qty · InvoiceDate · Price · Customer ID</text>
+<text x="50"  y="188" font-size="10" fill="#3a5068">Dec 2009  ──────────────────────────────  Dec 2011</text>
+
+<!-- Arrow down -->
+<line x1="229" y1="204" x2="229" y2="234" stroke="#00d4ff" stroke-width="1.8" marker-end="url(#arr-cyan)"/>
+<text x="238" y="223" font-size="9" fill="#00d4ff" opacity="0.7">load_raw()</text>
+
+<!-- Card: clean -->
+<g filter="url(#glow-cyan)">
+  <rect x="30" y="236" width="398" height="90" rx="8" fill="#0c1824" stroke="#00d4ff" stroke-width="1.4"/>
+  <rect x="30" y="236" width="398" height="90" rx="8" fill="url(#card-fade)"/>
+  <rect x="30" y="236" width="398" height="7"  rx="4" fill="#00d4ff" opacity="0.8"/>
+</g>
+<text x="50"  y="262" font-size="12" font-weight="700" fill="#dce8f5">loader.clean()</text>
+<text x="416" y="254" text-anchor="end" font-size="9" fill="#00d4ff" opacity="0.6">data.loader</text>
+<text x="50"  y="281" font-size="10" fill="#3a5068">− invoices prefixed 'C' (cancellations)</text>
+<text x="50"  y="297" font-size="10" fill="#3a5068">− missing Customer ID  · qty ≤ 0  · price ≤ 0  · duplicates</text>
+<text x="50"  y="313" font-size="10" fill="#3a5068">Revenue = Quantity × Price  |  Customer ID → str</text>
+
+<!-- Stats callout -->
+<rect x="30" y="342" width="398" height="66" rx="6" fill="#060a10" stroke="#1a2e40" stroke-width="1"/>
+<text x="50"  y="364" font-size="13" font-weight="700" fill="#00d4ff">779,425</text>
+<text x="160" y="364" font-size="10" fill="#3a5068">clean transactions</text>
+<text x="50"  y="382" font-size="13" font-weight="700" fill="#00d4ff">5,878</text>
+<text x="160" y="382" font-size="10" fill="#3a5068">unique customers</text>
+<text x="50"  y="400" font-size="10" fill="#3a5068">Dec 01 2009  →  Dec 09 2011</text>
+
+
+
+<!-- ═══════════════════════════════════════════════════════════ LANE 2 — FEATURES + PREP -->
+
+<!-- Cross-lane arrow: clean → features -->
+<path d="M428,281 H448 Q458,281 458,281 H470" stroke="#00d4ff" stroke-width="1.6" fill="none" marker-end="url(#arr-cyan)" stroke-dasharray="5,3"/>
+
+<!-- Card: feature engineering -->
+<g filter="url(#glow-amber)">
+  <rect x="448" y="108" width="420" height="96" rx="8" fill="#131008" stroke="#ffaa00" stroke-width="1.4"/>
+  <rect x="448" y="108" width="420" height="96" rx="8" fill="url(#card-fade)"/>
+  <rect x="448" y="108" width="420" height="7"  rx="4" fill="#ffaa00" opacity="0.8"/>
+</g>
+<text x="468" y="134" font-size="12" font-weight="700" fill="#dce8f5">build_customer_features()</text>
+<text x="856" y="126" text-anchor="end" font-size="9" fill="#ffaa00" opacity="0.6">features.engineer</text>
+<text x="468" y="153" font-size="10" fill="#3a5068">per-customer behavioral profile  ·  snapshot = max(date) + 1d</text>
+<text x="468" y="170" font-size="10" fill="#3a5068">median imputation  ·  revenue slope via OLS on monthly aggregates</text>
+<text x="468" y="188" font-size="10" fill="#3a5068">output: DataFrame[Customer ID  ×  11 features]   —   0 NaNs</text>
+
+<!-- Feature pills grid (6 pills, 2 cols) -->
+<text x="468" y="220" font-size="9" fill="#ffaa00" opacity="0.5" letter-spacing="1">FEATURE GROUPS</text>
+
+<!-- pill helper: each pill is a rounded rect + two text labels -->
+<!-- row 1 -->
+<rect x="448" y="226" width="200" height="30" rx="5" fill="#0e0c06" stroke="#ffaa00" stroke-width="0.9" opacity="0.85"/>
+<text x="460" y="245" font-size="9" font-weight="700" fill="#ffaa00">RFM</text>
+<text x="498" y="245" font-size="9" fill="#3a5068">recency · orders · revenue</text>
+
+<rect x="660" y="226" width="204" height="30" rx="5" fill="#0e0c06" stroke="#ffaa00" stroke-width="0.9" opacity="0.85"/>
+<text x="672" y="245" font-size="9" font-weight="700" fill="#ffaa00">VALUE</text>
+<text x="716" y="245" font-size="9" fill="#3a5068">mean_order_value · CV</text>
+
+<!-- row 2 -->
+<rect x="448" y="262" width="200" height="30" rx="5" fill="#0e0c06" stroke="#ffaa00" stroke-width="0.9" opacity="0.85"/>
+<text x="460" y="281" font-size="9" font-weight="700" fill="#ffaa00">VOLUME</text>
+<text x="516" y="281" font-size="9" fill="#3a5068">mean_order_qty · CV</text>
+
+<rect x="660" y="262" width="204" height="30" rx="5" fill="#0e0c06" stroke="#ffaa00" stroke-width="0.9" opacity="0.85"/>
+<text x="672" y="281" font-size="9" font-weight="700" fill="#ffaa00">BASKET</text>
+<text x="720" y="281" font-size="9" fill="#3a5068">unique SKUs / invoice</text>
+
+<!-- row 3 -->
+<rect x="448" y="298" width="200" height="30" rx="5" fill="#060c0e" stroke="#00d4ff" stroke-width="0.9" opacity="0.85"/>
+<text x="460" y="317" font-size="9" font-weight="700" fill="#00d4ff">TIMING</text>
+<text x="510" y="317" font-size="9" fill="#3a5068">iod_mean · iod_std</text>
+
+<rect x="660" y="298" width="204" height="30" rx="5" fill="#060e0a" stroke="#00e87a" stroke-width="0.9" opacity="0.85"/>
+<text x="672" y="317" font-size="9" font-weight="700" fill="#00e87a">TREND</text>
+<text x="714" y="317" font-size="9" fill="#3a5068">OLS slope monthly revenue</text>
+
+<!-- Arrow down: features → scaler -->
+<line x1="658" y1="334" x2="658" y2="364" stroke="#ffaa00" stroke-width="1.8" marker-end="url(#arr-amber)"/>
+
+<!-- Card: scaler block -->
+<rect x="448" y="366" width="420" height="70" rx="8" fill="#0e0e18" stroke="#3a5068" stroke-width="1.2"/>
+<rect x="448" y="366" width="420" height="70" rx="8" fill="url(#card-fade)"/>
+<rect x="448" y="366" width="420" height="5"  rx="3" fill="#3a5068" opacity="0.7"/>
+
+<rect x="458" y="378" width="188" height="46" rx="6" fill="#0a0a14" stroke="#3a5068" stroke-width="0.9"/>
+<text x="552" y="396" text-anchor="middle" font-size="10" font-weight="600" fill="#dce8f5">SimpleImputer</text>
+<text x="552" y="412" text-anchor="middle" font-size="9" fill="#3a5068">strategy = median</text>
+
+<text x="654" y="400" text-anchor="middle" font-size="14" fill="#3a5068">→</text>
+
+<rect x="662" y="378" width="196" height="46" rx="6" fill="#0a0a14" stroke="#3a5068" stroke-width="0.9"/>
+<text x="760" y="396" text-anchor="middle" font-size="10" font-weight="600" fill="#dce8f5">StandardScaler</text>
+<text x="760" y="412" text-anchor="middle" font-size="9" fill="#3a5068">zero-mean · unit-variance</text>
+<text x="856" y="370" text-anchor="end" font-size="9" fill="#3a5068" opacity="0.6">sklearn</text>
+
+<!-- Arrow down: scaler → inject -->
+<line x1="658" y1="436" x2="658" y2="468" stroke="#ff2d78" stroke-width="1.8" marker-end="url(#arr-pink)"/>
+
+<!-- Card: inject anomalies -->
+<g filter="url(#glow-pink)">
+  <rect x="448" y="470" width="420" height="88" rx="8" fill="#130810" stroke="#ff2d78" stroke-width="1.4"/>
+  <rect x="448" y="470" width="420" height="88" rx="8" fill="url(#card-fade)"/>
+  <rect x="448" y="470" width="420" height="7"  rx="4" fill="#ff2d78" opacity="0.8"/>
+</g>
+<text x="468" y="496" font-size="12" font-weight="700" fill="#dce8f5">inject_anomalies()</text>
+<text x="856" y="488" text-anchor="end" font-size="9" fill="#ff2d78" opacity="0.6">evaluation.synthetic</text>
+<text x="468" y="514" font-size="10" fill="#3a5068">5% of customers  ·  labels_true for recall evaluation only</text>
+
+<!-- 4 injection type tags -->
+<rect x="452" y="524" width="100" height="24" rx="4" fill="#1a0512" stroke="#ff2d78" stroke-width="0.8"/>
+<text x="502" y="540" text-anchor="middle" font-size="8" fill="#ff2d78">volume_spike</text>
+
+<rect x="558" y="524" width="116" height="24" rx="4" fill="#1a0512" stroke="#ff2d78" stroke-width="0.8"/>
+<text x="616" y="540" text-anchor="middle" font-size="8" fill="#ff2d78">revenue_collapse</text>
+
+<rect x="680" y="524" width="110" height="24" rx="4" fill="#1a0512" stroke="#ff2d78" stroke-width="0.8"/>
+<text x="735" y="540" text-anchor="middle" font-size="8" fill="#ff2d78">frequency_drop</text>
+
+<rect x="796" y="524" width="68" height="24" rx="4" fill="#1a0512" stroke="#ff2d78" stroke-width="0.8" opacity="0.7"/>
+<text x="830" y="540" text-anchor="middle" font-size="8" fill="#ff2d78" opacity="0.7">timing_irr.</text>
+
+<!-- Injection multipliers note -->
+<text x="468" y="572" font-size="9" fill="#3a5068">×3–5  ·  ×0.1  ·  ×4–6  ·  ×5–10  (random per customer)</text>
+
+
+<!-- ═══════════════════════════════════════════════════════════ LANE 3 — MODELS -->
+
+<!-- Cross-lane: scaler → models (X_scaled) -->
+<path d="M868,395 H888 Q898,395 898,395 H908" stroke="#ff2d78" stroke-width="1.6" fill="none" marker-end="url(#arr-pink)" stroke-dasharray="5,3"/>
+<text x="875" y="388" font-size="8.5" fill="#ff2d78" opacity="0.7">X_scaled</text>
+
+<!-- Model cards (3 detectors) -->
+<g filter="url(#glow-pink)">
+  <rect x="888" y="108" width="420" height="82" rx="8" fill="#130810" stroke="#ff2d78" stroke-width="1.4"/>
+  <rect x="888" y="108" width="420" height="82" rx="8" fill="url(#card-fade)"/>
+  <rect x="888" y="108" width="420" height="7"  rx="4" fill="#ff2d78" opacity="0.8"/>
+</g>
+<text x="908" y="134" font-size="12" font-weight="700" fill="#dce8f5">Isolation Forest</text>
+<text x="1296" y="126" text-anchor="end" font-size="9" fill="#ff2d78" opacity="0.6">pyod.IForest</text>
+<text x="908" y="152" font-size="10" fill="#3a5068">n_estimators=200  ·  contamination=0.05  ·  seed=42</text>
+<text x="908" y="168" font-size="10" fill="#3a5068">isolates anomalies faster in random partitions  ·  AUC ≈ 0.683</text>
+
+<!-- score line down -->
+<line x1="1098" y1="190" x2="1098" y2="220" stroke="#ff2d78" stroke-width="1.4" marker-end="url(#arr-pink)"/>
+
+<g filter="url(#glow-pink)">
+  <rect x="888" y="222" width="420" height="82" rx="8" fill="#130810" stroke="#ff2d78" stroke-width="1.4"/>
+  <rect x="888" y="222" width="420" height="82" rx="8" fill="url(#card-fade)"/>
+  <rect x="888" y="222" width="420" height="7"  rx="4" fill="#ff2d78" opacity="0.8"/>
+</g>
+<text x="908" y="248" font-size="12" font-weight="700" fill="#dce8f5">LOF</text>
+<text x="1296" y="240" text-anchor="end" font-size="9" fill="#ff2d78" opacity="0.6">pyod.LOF</text>
+<text x="908" y="266" font-size="10" fill="#3a5068">n_neighbors = 20  ·  contamination = 0.05</text>
+<text x="908" y="282" font-size="10" fill="#00e87a">local density deviation  ·  best F1  ·  AUC ≈ 0.598  ★</text>
+
+<line x1="1098" y1="304" x2="1098" y2="334" stroke="#ff2d78" stroke-width="1.4" marker-end="url(#arr-pink)"/>
+
+<g filter="url(#glow-pink)">
+  <rect x="888" y="336" width="420" height="82" rx="8" fill="#130810" stroke="#ff2d78" stroke-width="1.4"/>
+  <rect x="888" y="336" width="420" height="82" rx="8" fill="url(#card-fade)"/>
+  <rect x="888" y="336" width="420" height="7"  rx="4" fill="#ff2d78" opacity="0.8"/>
+</g>
+<text x="908" y="362" font-size="12" font-weight="700" fill="#dce8f5">HBOS</text>
+<text x="1296" y="354" text-anchor="end" font-size="9" fill="#ff2d78" opacity="0.6">pyod.HBOS</text>
+<text x="908" y="380" font-size="10" fill="#3a5068">n_bins = 30  ·  contamination = 0.05</text>
+<text x="908" y="396" font-size="10" fill="#3a5068">histogram-based  ·  no distance computation  ·  AUC ≈ 0.564</text>
+
+<!-- Convergence lines from 3 model outputs → ensemble -->
+<line x1="1098" y1="418" x2="1098" y2="440" stroke="#ff2d78" stroke-width="1.2"/>
+<path d="M1098,440 H1098" stroke="#ff2d78" stroke-width="1.2" fill="none"/>
+
+<!-- Fan-in connector -->
+<path d="M1020,149 L1020,460 Q1020,472 1032,472 H1058"
+      stroke="#ff2d78" stroke-width="1.1" fill="none" stroke-dasharray="3,4" opacity="0.4"/>
+<path d="M1098,190 V460" stroke="#ff2d78" stroke-width="1.1" fill="none" stroke-dasharray="3,4" opacity="0.4"/>
+<path d="M1176,149 L1176,460 Q1176,472 1164,472 H1140"
+      stroke="#ff2d78" stroke-width="1.1" fill="none" stroke-dasharray="3,4" opacity="0.4"/>
+<text x="908" y="456" font-size="8.5" fill="#ff2d78" opacity="0.5">decision_scores_  ↓</text>
+<line x1="1098" y1="460" x2="1098" y2="480" stroke="#a855f7" stroke-width="1.8" marker-end="url(#arr-purple)"/>
+
+<!-- Card: ensemble -->
+<g filter="url(#glow-purple)">
+  <rect x="888" y="482" width="420" height="90" rx="8" fill="#100c18" stroke="#a855f7" stroke-width="1.4"/>
+  <rect x="888" y="482" width="420" height="90" rx="8" fill="url(#card-fade)"/>
+  <rect x="888" y="482" width="420" height="7"  rx="4" fill="#a855f7" opacity="0.8"/>
+</g>
+<text x="908" y="508" font-size="12" font-weight="700" fill="#dce8f5">Score Ensemble</text>
+<text x="1296" y="500" text-anchor="end" font-size="9" fill="#a855f7" opacity="0.6">models.detector</text>
+<text x="908" y="526" font-size="10" fill="#3a5068">min-max norm per model  →  avg  →  threshold @ p95</text>
+
+<!-- ensemble formula -->
+<rect x="908" y="536" width="390" height="28" rx="4" fill="#0c0a18" stroke="#a855f7" stroke-width="0.7" opacity="0.7"/>
+<text x="1103" y="554" text-anchor="middle" font-size="9.5" fill="#a855f7" font-weight="600">
+  ens_score = mean( norm(IForest) , norm(LOF) , norm(HBOS) )
+</text>
+
+
+<!-- ═══════════════════════════════════════════════════════════ LANE 4 — EVALUATE + TRACK -->
+
+<!-- Cross-lane: ensemble → evaluate -->
+<path d="M1308,527 H1328 Q1338,527 1338,527 H1348" stroke="#a855f7" stroke-width="1.6" fill="none" marker-end="url(#arr-purple)" stroke-dasharray="5,3"/>
+
+<!-- Card: HITL -->
+<g filter="url(#glow-green)">
+  <rect x="1328" y="108" width="412" height="92" rx="8" fill="#07130e" stroke="#00e87a" stroke-width="1.4"/>
+  <rect x="1328" y="108" width="412" height="92" rx="8" fill="url(#card-fade)"/>
+  <rect x="1328" y="108" width="412" height="7"  rx="4" fill="#00e87a" opacity="0.8"/>
+</g>
+<text x="1348" y="134" font-size="12" font-weight="700" fill="#dce8f5">HITL Simulation</text>
+<text x="1730" y="126" text-anchor="end" font-size="9" fill="#00e87a" opacity="0.6">evaluation.hitl</text>
+<text x="1348" y="153" font-size="10" fill="#3a5068">12-week control-team review loop  ·  20 flagged records / week</text>
+<text x="1348" y="169" font-size="10" fill="#3a5068">cumulative precision accumulation  ·  TP / FP tracking</text>
+<text x="1348" y="185" font-size="10" fill="#00e87a">→ live precision estimate without full ground-truth labels</text>
+
+<line x1="1534" y1="200" x2="1534" y2="228" stroke="#00e87a" stroke-width="1.5" marker-end="url(#arr-green)"/>
+
+<!-- Card: PSI -->
+<g filter="url(#glow-green)">
+  <rect x="1328" y="230" width="412" height="110" rx="8" fill="#07130e" stroke="#00e87a" stroke-width="1.4"/>
+  <rect x="1328" y="230" width="412" height="110" rx="8" fill="url(#card-fade)"/>
+  <rect x="1328" y="230" width="412" height="7"  rx="4" fill="#00e87a" opacity="0.8"/>
+</g>
+<text x="1348" y="256" font-size="12" font-weight="700" fill="#dce8f5">PSI Monitor</text>
+<text x="1730" y="248" text-anchor="end" font-size="9" fill="#00e87a" opacity="0.6">evaluation.psi</text>
+<text x="1348" y="274" font-size="10" fill="#3a5068">feature drift  ·  year 2009-10  vs  year 2010-11</text>
+
+<rect x="1348" y="284" width="116" height="22" rx="4" fill="#07130e" stroke="#00e87a" stroke-width="0.8"/>
+<text x="1406" y="299" text-anchor="middle" font-size="9" fill="#00e87a">PSI &lt; 0.10  STABLE</text>
+
+<rect x="1472" y="284" width="124" height="22" rx="4" fill="#130e06" stroke="#ffaa00" stroke-width="0.8"/>
+<text x="1534" y="299" text-anchor="middle" font-size="9" fill="#ffaa00">0.10-0.20  SLIGHT</text>
+
+<rect x="1604" y="284" width="128" height="22" rx="4" fill="#130610" stroke="#ff2d78" stroke-width="0.8"/>
+<text x="1668" y="299" text-anchor="middle" font-size="9" fill="#ff2d78">&gt; 0.20  RETRAIN !</text>
+
+<text x="1348" y="324" font-size="10" fill="#3a5068">recency_days PSI = 1.58 → SIGNIFICANT (expected: fixed snapshot)</text>
+
+<line x1="1534" y1="340" x2="1534" y2="370" stroke="#00e87a" stroke-width="1.5" marker-end="url(#arr-green)"/>
+
+<!-- Card: Recall eval -->
+<g filter="url(#glow-green)">
+  <rect x="1328" y="372" width="412" height="104" rx="8" fill="#07130e" stroke="#00e87a" stroke-width="1.4"/>
+  <rect x="1328" y="372" width="412" height="104" rx="8" fill="url(#card-fade)"/>
+  <rect x="1328" y="372" width="412" height="7"  rx="4" fill="#00e87a" opacity="0.8"/>
+</g>
+<text x="1348" y="398" font-size="12" font-weight="700" fill="#dce8f5">Recall Eval  (synthetic labels)</text>
+<text x="1730" y="390" text-anchor="end" font-size="9" fill="#00e87a" opacity="0.6">evaluation.synthetic</text>
+<text x="1348" y="416" font-size="10" fill="#3a5068">Recall · Precision · F1 · ROC-AUC  per model  +  ensemble</text>
+
+<!-- metrics table -->
+<text x="1348" y="438" font-size="9.5" fill="#dce8f5" font-weight="600">IForest</text>
+<text x="1430" y="438" font-size="9.5" fill="#3a5068">F1=0.133</text>
+<text x="1510" y="438" font-size="9.5" fill="#3a5068">AUC=0.683</text>
+
+<text x="1348" y="456" font-size="9.5" fill="#00e87a" font-weight="600">LOF ★</text>
+<text x="1430" y="456" font-size="9.5" fill="#00e87a">F1=0.174</text>
+<text x="1510" y="456" font-size="9.5" fill="#00e87a">AUC=0.682</text>
+
+<text x="1348" y="468" font-size="9.5" fill="#3a5068" font-weight="600">HBOS</text>
+<text x="1430" y="468" font-size="9.5" fill="#3a5068">F1=0.095</text>
+<text x="1510" y="468" font-size="9.5" fill="#3a5068">AUC=0.564</text>
+
+<line x1="1534" y1="476" x2="1534" y2="508" stroke="#a855f7" stroke-width="1.5" marker-end="url(#arr-purple)"/>
+
+<!-- Card: MLflow -->
+<g filter="url(#glow-purple)">
+  <rect x="1328" y="510" width="412" height="98" rx="8" fill="#100c18" stroke="#a855f7" stroke-width="1.4"/>
+  <rect x="1328" y="510" width="412" height="98" rx="8" fill="url(#card-fade)"/>
+  <rect x="1328" y="510" width="412" height="7"  rx="4" fill="#a855f7" opacity="0.8"/>
+</g>
+<text x="1348" y="536" font-size="12" font-weight="700" fill="#dce8f5">MLflow Tracking</text>
+<text x="1730" y="528" text-anchor="end" font-size="9" fill="#a855f7" opacity="0.6">mlflow</text>
+<text x="1348" y="554" font-size="10" fill="#3a5068">experiment: b2b-anomaly-detection  ·  3 runs</text>
+<text x="1348" y="570" font-size="10" fill="#3a5068">params: model · contamination · n_customers · n_features</text>
+<text x="1348" y="586" font-size="10" fill="#3a5068">metrics: recall · precision · F1 · roc_auc</text>
+<text x="1348" y="600" font-size="10" fill="#a855f7">artifacts: model.pkl  ·  conda.yaml  ·  MLmodel</text>
+
+
+<!-- ═══════════════════════════════════════════════════════════ BOTTOM: MODULE MAP -->
+<rect x="20" y="640" width="1720" height="120" rx="8" fill="#0a0f18" stroke="#1a2e40" stroke-width="1"/>
+<text x="880" y="665" text-anchor="middle" font-size="10" font-weight="600" fill="#3a5068" letter-spacing="2">MODULE MAP</text>
+
+<!-- module badges in a row -->
+<g>
+  <rect x="40"   y="676" width="205" height="72" rx="6" fill="#060a10" stroke="#00d4ff" stroke-width="0.9"/>
+  <text x="142"  y="695" text-anchor="middle" font-size="9" font-weight="700" fill="#00d4ff">anomaly_detection.data</text>
+  <text x="142"  y="712" text-anchor="middle" font-size="8.5" fill="#3a5068">loader.load_raw()</text>
+  <text x="142"  y="727" text-anchor="middle" font-size="8.5" fill="#3a5068">loader.clean()</text>
+  <text x="142"  y="742" text-anchor="middle" font-size="8.5" fill="#3a5068">→ cleaned DataFrame</text>
+</g>
+<g>
+  <rect x="258"  y="676" width="235" height="72" rx="6" fill="#060a10" stroke="#ffaa00" stroke-width="0.9"/>
+  <text x="375"  y="695" text-anchor="middle" font-size="9" font-weight="700" fill="#ffaa00">anomaly_detection.features</text>
+  <text x="375"  y="712" text-anchor="middle" font-size="8.5" fill="#3a5068">engineer.build_customer_features()</text>
+  <text x="375"  y="727" text-anchor="middle" font-size="8.5" fill="#3a5068">engineer.BehavioralFeatureTransformer</text>
+  <text x="375"  y="742" text-anchor="middle" font-size="8.5" fill="#3a5068">→ 11-feature matrix</text>
+</g>
+<g>
+  <rect x="506"  y="676" width="210" height="72" rx="6" fill="#060a10" stroke="#ff2d78" stroke-width="0.9"/>
+  <text x="611"  y="695" text-anchor="middle" font-size="9" font-weight="700" fill="#ff2d78">anomaly_detection.models</text>
+  <text x="611"  y="712" text-anchor="middle" font-size="8.5" fill="#3a5068">detector.AnomalyDetectorSuite</text>
+  <text x="611"  y="727" text-anchor="middle" font-size="8.5" fill="#3a5068">detector.DetectionResult</text>
+  <text x="611"  y="742" text-anchor="middle" font-size="8.5" fill="#3a5068">→ labels · scores · metrics</text>
+</g>
+<g>
+  <rect x="729"  y="676" width="300" height="72" rx="6" fill="#060a10" stroke="#00e87a" stroke-width="0.9"/>
+  <text x="879"  y="695" text-anchor="middle" font-size="9" font-weight="700" fill="#00e87a">anomaly_detection.evaluation</text>
+  <text x="879"  y="712" text-anchor="middle" font-size="8.5" fill="#3a5068">synthetic.inject_anomalies()</text>
+  <text x="879"  y="727" text-anchor="middle" font-size="8.5" fill="#3a5068">hitl.simulate_hitl_review()</text>
+  <text x="879"  y="742" text-anchor="middle" font-size="8.5" fill="#3a5068">psi.monitor_psi()</text>
+</g>
+<g>
+  <rect x="1042" y="676" width="230" height="72" rx="6" fill="#060a10" stroke="#3a5068" stroke-width="0.9"/>
+  <text x="1157" y="695" text-anchor="middle" font-size="9" font-weight="700" fill="#dce8f5">anomaly_detection.visualization</text>
+  <text x="1157" y="712" text-anchor="middle" font-size="8.5" fill="#3a5068">plots.plot_pca_scatter()</text>
+  <text x="1157" y="727" text-anchor="middle" font-size="8.5" fill="#3a5068">plots.plot_model_comparison()</text>
+  <text x="1157" y="742" text-anchor="middle" font-size="8.5" fill="#3a5068">+ 5 more plot functions</text>
+</g>
+<g>
+  <rect x="1286" y="676" width="180" height="72" rx="6" fill="#060a10" stroke="#a855f7" stroke-width="0.9"/>
+  <text x="1376" y="695" text-anchor="middle" font-size="9" font-weight="700" fill="#a855f7">config / scripts</text>
+  <text x="1376" y="712" text-anchor="middle" font-size="8.5" fill="#3a5068">config.yaml</text>
+  <text x="1376" y="727" text-anchor="middle" font-size="8.5" fill="#3a5068">scripts/run_pipeline.py</text>
+  <text x="1376" y="742" text-anchor="middle" font-size="8.5" fill="#3a5068">notebooks/ · tests/</text>
+</g>
+<g>
+  <rect x="1479" y="676" width="261" height="72" rx="6" fill="#060a10" stroke="#1a2e40" stroke-width="0.9"/>
+  <text x="1609" y="695" text-anchor="middle" font-size="9" font-weight="700" fill="#3a5068">install</text>
+  <text x="1609" y="712" text-anchor="middle" font-size="8.5" fill="#3a5068">conda env create -f environment.yml</text>
+  <text x="1609" y="727" text-anchor="middle" font-size="8.5" fill="#3a5068">pip install -e ".[dev]"</text>
+  <text x="1609" y="742" text-anchor="middle" font-size="8.5" fill="#3a5068">pytest  ·  30 tests passing</text>
+</g>
+
+
+<!-- ═══════════════════════════════════════════════════════════ LEGEND BAR -->
+<rect x="20" y="776" width="1720" height="38" rx="6" fill="#0a0f18" stroke="#1a2e40" stroke-width="1"/>
+
+<rect x="160" y="789" width="12" height="12" rx="2" fill="#00d4ff"/>
+<text x="178" y="800" font-size="9" fill="#3a5068">ingest</text>
+
+<rect x="270" y="789" width="12" height="12" rx="2" fill="#ffaa00"/>
+<text x="288" y="800" font-size="9" fill="#3a5068">features</text>
+
+<rect x="390" y="789" width="12" height="12" rx="2" fill="#ff2d78"/>
+<text x="408" y="800" font-size="9" fill="#3a5068">models</text>
+
+<rect x="510" y="789" width="12" height="12" rx="2" fill="#a855f7"/>
+<text x="528" y="800" font-size="9" fill="#3a5068">ensemble</text>
+
+<rect x="648" y="789" width="12" height="12" rx="2" fill="#00e87a"/>
+<text x="666" y="800" font-size="9" fill="#3a5068">evaluation</text>
+
+<rect x="790" y="789" width="12" height="12" rx="2" fill="#3a5068"/>
+<text x="808" y="800" font-size="9" fill="#3a5068">sklearn / scaling</text>
+
+<line x1="940" y1="793" x2="980" y2="793" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="4,3"/>
+<text x="990" y="800" font-size="9" fill="#3a5068">data flow</text>
+
+<line x1="1080" y1="793" x2="1120" y2="793" stroke="#ff2d78" stroke-width="1.5" stroke-dasharray="4,3"/>
+<text x="1130" y="800" font-size="9" fill="#3a5068">scores feed</text>
+
+<text x="1740" y="800" text-anchor="end" font-size="8.5" fill="#1a2e40">anomaly_detection v0.1.0</text>
+
+</svg>
+</body>
+</html>

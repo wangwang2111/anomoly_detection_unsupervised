@@ -1,0 +1,34 @@
+# Data — large files, not versioned
+data/online_retail_II.xlsx
+data/online_retail_II.parquet
+
+# MLflow experiment tracking
+mlruns/
+**/mlruns/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Env
+.env
+.venv
+env/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
