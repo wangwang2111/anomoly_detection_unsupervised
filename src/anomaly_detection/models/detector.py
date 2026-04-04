@@ -1,9 +1,13 @@
 """
 models.detector
 ---------------
-Uniform train/predict/score API wrapping three PyOD detectors and an
+Uniform train/predict/score API wrapping four PyOD detectors and an
 average-score ensemble.  All model hyperparameters flow in via the
 config dict — no magic numbers in this file.
+
+Models: IsolationForest, LOF, COPOD, ECOD.
+HBOS was removed — COPOD and ECOD handle feature correlations correctly
+whereas HBOS assumes independence, which degrades accuracy on this dataset.
 
 The :class:`AnomalyDetectorSuite` trains all models in one call,
 returns a :class:`DetectionResult` dataclass, and logs every run to
@@ -17,7 +21,8 @@ from dataclasses import dataclass, field
 import mlflow
 import mlflow.sklearn
 import numpy as np
-from pyod.models.hbos import HBOS
+from pyod.models.copod import COPOD
+from pyod.models.ecod import ECOD
 from pyod.models.iforest import IForest
 from pyod.models.lof import LOF
 from sklearn.metrics import average_precision_score, f1_score, precision_score, recall_score
@@ -99,9 +104,11 @@ class AnomalyDetectorSuite:
                 contamination=self._contamination,
                 n_neighbors=self.cfg["lof"]["n_neighbors"],
             ),
-            "HBOS": HBOS(
+            "COPOD": COPOD(
                 contamination=self._contamination,
-                n_bins=self.cfg["hbos"]["n_bins"],
+            ),
+            "ECOD": ECOD(
+                contamination=self._contamination,
             ),
         }
 

@@ -28,8 +28,8 @@ models:
     n_estimators: 200
   lof:
     n_neighbors: 20
-  hbos:
-    n_bins: 30
+  copod: {}                      # no hyperparameters — parameter-free
+  ecod: {}                       # no hyperparameters — parameter-free
 
 evaluation:
   synthetic_frac: 0.05         # fraction of customers injected as anomalies
