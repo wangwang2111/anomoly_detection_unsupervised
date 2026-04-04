@@ -323,9 +323,9 @@ Synthetic anomalies are single-feature perturbations. Real anomalies often affec
 
 **Source**: `src/anomaly_detection/models/detector.py`
 
-### Why three models?
+### Why four models?
 
-No single unsupervised detector performs best across all anomaly types. Each model has a different inductive bias. Using three models with complementary strengths reduces the risk of systematic blind spots.
+No single unsupervised detector performs best across all anomaly types. Each model has a different inductive bias. Using four models with complementary strengths reduces the risk of systematic blind spots.
 
 ### Isolation Forest
 
@@ -358,22 +358,33 @@ No single unsupervised detector performs best across all anomaly types. Each mod
 
 **Why `n_neighbors=20`**: Standard recommendation for datasets of this size. Too small (`k=5`) = noisy scores, sensitive to individual nearby points. Too large (`k=100`) = loses local structure, becomes more like a global method.
 
-**Observed performance**: LOF achieves the best F1 of the three models on our synthetic injection test. Likely because B2B behavioral anomalies tend to be locally concentrated — customers in the same industry or size tier exhibit similar deviations, making LOF's local density comparison particularly effective.
+**Observed performance**: LOF achieves the best F1 among all models on our synthetic injection test. Likely because B2B behavioral anomalies tend to be locally concentrated — customers in the same industry or size tier exhibit similar deviations, making LOF's local density comparison particularly effective.
 
-### HBOS (Histogram-Based Outlier Score)
+### COPOD (Copula-Based Outlier Detection)
 
 | Property | Value |
 |---|---|
-| `n_bins` | 30 |
 | `contamination` | 0.05 |
+| Hyperparameters | None |
 
-**Mechanism**: Builds an independent histogram per feature. A record is anomalous if it falls in low-density bins across multiple features. Score is the sum of log-inverse bin densities.
+**Mechanism**: Fits an empirical copula to model the joint distribution of all features. A point is anomalous if it falls in the tail of that joint distribution. Captures the dependency structure between features.
 
-**Strength**: `O(n)` — extremely fast. No distance computation. Not affected by the curse of dimensionality in the same way as distance-based methods.
+**Strength**: Parameter-free. Fast `O(n log n)`. Correctly handles correlated features unlike HBOS — knows that high revenue + low orders is jointly unusual even if each looks individually fine.
 
-**Weakness**: Assumes feature independence. Does not capture correlations between features. Two features may individually look normal but be jointly anomalous (e.g. high revenue + very low order count), which HBOS would miss.
+**Why it replaces HBOS**: HBOS assumes feature independence and scores each feature in isolation. Our feature set has moderate correlations (`total_revenue` ↔ `mean_order_value`, r ≈ 0.7). COPOD handles this correctly.
 
-**Why 30 bins**: Enough resolution to capture the shape of our feature distributions without creating sparsely populated tail bins. Fewer bins (10) would smooth over real density variation; more bins (100) would create unstable density estimates for customers in rare ranges.
+### ECOD (Empirical Cumulative Distribution-Based Outlier Detection)
+
+| Property | Value |
+|---|---|
+| `contamination` | 0.05 |
+| Hyperparameters | None |
+
+**Mechanism**: Estimates the empirical CDF of each feature, then flags points that fall in extreme left or right tails across multiple features. Scores are aggregated across all features.
+
+**Strength**: Extremely fast `O(n log n)`. No parametric assumptions. No hyperparameters. More principled than HBOS — uses actual tail probabilities rather than histogram bin densities.
+
+**Why it replaces HBOS**: Same core reasoning as COPOD. ECOD is more statistically grounded and does not require choosing `n_bins`.
 
 ### Why not OCSVM, Autoencoder, or DBSCAN?
 
@@ -402,7 +413,7 @@ models:
 
 Each model has a different sensitivity profile. A record that IForest misses (because it's a local anomaly) may be caught by LOF, and vice versa. Averaging scores reduces variance and makes the final ranking more stable.
 
-A record flagged with high scores by all three models is very likely a true anomaly. A record flagged by only one model with borderline confidence is much less certain. The ensemble naturally encodes this.
+A record flagged with high scores by all four models is very likely a true anomaly. A record flagged by only one model with borderline confidence is much less certain. The ensemble naturally encodes this.
 
 ### Min-max normalisation before averaging
 
@@ -412,7 +423,8 @@ Raw decision scores are on incomparable scales:
 |---|---|---|
 | IForest | Negative (lower = more anomalous) | −0.5 to +0.5 |
 | LOF | Positive (higher = more anomalous) | 1.0 to 100+ |
-| HBOS | Positive log-likelihood | 0 to 50+ |
+| COPOD | Positive (higher = more anomalous) | 0 to 50+ |
+| ECOD | Positive (higher = more anomalous) | 0 to 50+ |
 
 Direct averaging would let LOF dominate purely because of its magnitude. Min-max normalisation maps each model's scores to `[0, 1]` independently before averaging:
 
@@ -458,12 +470,15 @@ Measures whether the input feature distributions are stable between the training
 
 ### Metric interpretation
 
-| Metric | Expected value | Interpretation |
+| Metric | Observed value | Interpretation |
 |---|---|---|
-| Synthetic recall | 0.13 – 0.17 | Expected for fully unsupervised at 5% contamination. Not a failure — no labels were used. |
-| AUC | 0.65 – 0.72 | Meaningful lift above random (0.5) for a label-free method. |
-| HITL precision (week 12) | 0.15 – 0.18 | ~1 in 6 flags confirmed as true anomaly. Useful for triage. |
-| PSI (non-recency features) | < 0.10 | Stable — model reuse is safe. |
+| Synthetic recall (LOF) | 0.174 | Best model. 3.5× above random at 5% contamination. No labels used. |
+| Synthetic recall (IForest) | 0.133 | 2.7× above random. |
+| Synthetic recall (COPOD/ECOD) | 0.085 – 0.099 | 1.7–2.0× above random. Weaker on local anomalies. |
+| PR-AUC (LOF) | 0.123 | 2.5× above random baseline of 0.05. |
+| PR-AUC (IForest) | 0.103 | 2.1× above random baseline. |
+| HITL precision (week 12) | 0.179 | ~1 in 6 flags confirmed as true anomaly. Useful for triage. |
+| PSI (non-recency features) | 0.0 | Stable — model reuse is safe. |
 
 ### Why not held-out validation?
 
@@ -684,13 +699,13 @@ Standard cross-validation shuffles randomly, leaking future information into tra
 **L4 — Contamination is an assumption**  
 `contamination=0.05` is a prior, not a measured rate. If the true anomaly rate is 1% or 15%, all thresholds, precision, and recall estimates shift accordingly. Sensitivity analysis over contamination would significantly strengthen the evaluation.
 
-**L5 — Feature independence in HBOS**  
-HBOS assumes features are independent. The correlation matrix shows moderate correlations (`total_revenue` ↔ `mean_order_value`, r ≈ 0.7). HBOS underperforms as a result (lowest AUC: ~0.564). This is a structural limitation of the algorithm, not a tuning issue.
+**L5 — COPOD/ECOD weaker on local anomalies**  
+COPOD and ECOD are global tail-based detectors. They underperform LOF on locally concentrated anomalies (PR-AUC 0.082–0.085 vs LOF 0.123). They are retained in the ensemble for their complementary global coverage, but LOF remains the primary model.
 
 ### Future Work
 
-**F1 — COPOD / ECOD**  
-Both are newer PyOD detectors based on copula/empirical CDF theory. They are parameter-free, fast, and handle feature correlations better than HBOS. Swapping them in requires a one-line change in `detector.py`.
+**F1 — SUOD / LODA ensemble scaling**  
+COPOD and ECOD are now implemented, replacing HBOS. The next step is SUOD (Scalable Unsupervised Outlier Detection) — a parallelised meta-framework that accelerates the full ensemble via approximation and parallel fitting, useful if the customer base grows to 50k+.
 
 **F2 — Temporal features**  
 Revenue momentum (change in slope over the last 3 months vs. the prior 3), order acceleration, and seasonal decomposition residuals would improve detection of gradual-drift anomalies that current features miss. Customers whose decline is slow and consistent would register more clearly with these additions.

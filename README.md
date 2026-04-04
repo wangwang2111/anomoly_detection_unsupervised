@@ -191,7 +191,7 @@ data/online_retail_II.xlsx
          ▼
  models.detector
  .AnomalyDetectorSuite
- .fit_predict()                  Isolation Forest · LOF · HBOS · score ensemble
+ .fit_predict()                  Isolation Forest · LOF · COPOD · ECOD · score ensemble
          │                       logs each run to MLflow
          ▼
  evaluation.hitl
@@ -209,10 +209,11 @@ data/online_retail_II.xlsx
 
 | Model | Recall | Precision | F1 | PR-AUC |
 |---|---|---|---|---|
-| Isolation Forest | 0.133 | 0.133 | 0.133 | 0.13 |
-| **LOF** | **0.174** | **0.174** | **0.174** | **0.16** |
-| HBOS | 0.096 | 0.095 | 0.095 | 0.08 |
-| Ensemble | 0.140 | 0.140 | 0.140 | 0.12 |
+| Isolation Forest | 0.133 | 0.133 | 0.133 | 0.103 |
+| **LOF** | **0.174** | **0.174** | **0.174** | **0.123** |
+| COPOD | 0.085 | 0.085 | 0.085 | 0.082 |
+| ECOD | 0.099 | 0.099 | 0.099 | 0.085 |
+| Ensemble | 0.130 | 0.129 | 0.130 | 0.101 |
 
 > PR-AUC random baseline = **0.05** (the anomaly rate). Any value above that is genuine lift.
 
@@ -246,7 +247,7 @@ Conservative scores are expected for fully unsupervised detection at 5% contamin
 
 | Assumption | Where it matters |
 |---|---|
-| ~5% of customers are anomalous at any time (`contamination=0.05`) | Sets the decision threshold for all three models and the ensemble |
+| ~5% of customers are anomalous at any time (`contamination=0.05`) | Sets the decision threshold for all four models and the ensemble |
 | Anomalies are rare and unlabelled | Justifies the unsupervised approach; if labels exist, use them |
 | Customer behaviour is relatively stable within the training window | Underpins StandardScaler fitting on the full population |
 | A fixed snapshot date is acceptable for recency | `recency_days` is computed from `max(InvoiceDate) + 1 day`, not from today |
@@ -263,7 +264,6 @@ Conservative scores are expected for fully unsupervised detection at 5% contamin
 | **Single-period training** | Model reflects 2009–2011 behaviour norms; stale on live data | Retrain on a rolling 12-month window; trigger on PSI > 0.20 |
 | **Contamination is a prior** | If true anomaly rate is 1% or 15%, all thresholds shift | Run sensitivity analysis; adjust `contamination` based on domain knowledge |
 | **Single-feature injection** | Recall estimates are optimistic; real anomalies span multiple features | Use multi-feature correlated injections in future evaluation |
-| **HBOS assumes feature independence** | `total_revenue` ↔ `mean_order_value` correlation (r ≈ 0.7) hurts HBOS | Replace HBOS with COPOD or ECOD (handles correlations, parameter-free) |
 | **No temporal cross-validation** | Standard metrics may be optimistic due to temporal leakage | Implement walk-forward validation for rigorous time-series evaluation |
 | **HITL labels discarded** | Model does not improve as the team reviews records | Implement PU learning or label propagation from accumulated HITL labels |
 | **Batch scoring only** | Anomalies detected at most weekly, not in real time | Extend to incremental per-invoice scoring with a sliding customer window |
@@ -281,8 +281,8 @@ models:
     n_estimators: 200
   lof:
     n_neighbors: 20
-  hbos:
-    n_bins: 30
+  copod: {}                      # parameter-free
+  ecod: {}                       # parameter-free
 
 evaluation:
   synthetic_frac: 0.05
