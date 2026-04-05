@@ -4,7 +4,7 @@ Unsupervised anomaly detection on B2B transaction data. Flags customers whose be
 
 Mirrors a real-world production system built on Vinatex B2B transaction data, rebuilt here on the public UCI Online Retail II dataset.
 
-![Pipeline](assets/pipeline.png?v=3)
+![Pipeline](assets/pipeline_v2.png)
 
 > Full interactive version: [`assets/pipeline.html`](assets/pipeline.html)
 
