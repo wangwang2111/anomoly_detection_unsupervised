@@ -6,76 +6,64 @@
 <title>B2B Anomaly Detection — Pipeline</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
-  body { margin: 0; background: #07090f; display: flex; justify-content: center; padding: 24px 0; }
-  svg  { font-family: 'JetBrains Mono', 'Fira Mono', monospace; }
+  body { margin: 0; background: #07090f; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+  svg  { font-family: 'JetBrains Mono', 'Fira Mono', monospace; display: block; max-width: 100%; }
 </style>
 </head>
 <body>
 <svg width="1760" height="1100" viewBox="0 0 1760 1100" xmlns="http://www.w3.org/2000/svg">
 <defs>
-
-  <pattern id="dots" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
-    <circle cx="14" cy="14" r="0.9" fill="#151f2e" opacity="0.9"/>
+  <pattern id="dots" x="0" y="0" width="32" height="32" patternUnits="userSpaceOnUse">
+    <circle cx="16" cy="16" r="0.8" fill="#161f2e" opacity="0.8"/>
   </pattern>
 
-  <filter id="glow-cyan" x="-30%" y="-30%" width="160%" height="160%">
-    <feGaussianBlur stdDeviation="4" result="blur"/>
-    <feFlood flood-color="#00d4ff" flood-opacity="0.3" result="color"/>
+  <filter id="glow-cyan" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="5" result="blur"/>
+    <feFlood flood-color="#00d4ff" flood-opacity="0.25" result="color"/>
     <feComposite in="color" in2="blur" operator="in" result="shadow"/>
     <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
   </filter>
-  <filter id="glow-amber" x="-30%" y="-30%" width="160%" height="160%">
-    <feGaussianBlur stdDeviation="4" result="blur"/>
-    <feFlood flood-color="#ffaa00" flood-opacity="0.3" result="color"/>
+  <filter id="glow-amber" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="5" result="blur"/>
+    <feFlood flood-color="#ffaa00" flood-opacity="0.25" result="color"/>
     <feComposite in="color" in2="blur" operator="in" result="shadow"/>
     <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
   </filter>
-  <filter id="glow-pink" x="-30%" y="-30%" width="160%" height="160%">
-    <feGaussianBlur stdDeviation="4" result="blur"/>
-    <feFlood flood-color="#ff2d78" flood-opacity="0.3" result="color"/>
+  <filter id="glow-pink" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="5" result="blur"/>
+    <feFlood flood-color="#ff2d78" flood-opacity="0.25" result="color"/>
     <feComposite in="color" in2="blur" operator="in" result="shadow"/>
     <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
   </filter>
-  <filter id="glow-green" x="-30%" y="-30%" width="160%" height="160%">
-    <feGaussianBlur stdDeviation="4" result="blur"/>
-    <feFlood flood-color="#00e87a" flood-opacity="0.3" result="color"/>
+  <filter id="glow-green" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="5" result="blur"/>
+    <feFlood flood-color="#00e87a" flood-opacity="0.25" result="color"/>
     <feComposite in="color" in2="blur" operator="in" result="shadow"/>
     <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
   </filter>
-  <filter id="glow-purple" x="-30%" y="-30%" width="160%" height="160%">
-    <feGaussianBlur stdDeviation="4" result="blur"/>
-    <feFlood flood-color="#a855f7" flood-opacity="0.3" result="color"/>
+  <filter id="glow-purple" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="5" result="blur"/>
+    <feFlood flood-color="#a855f7" flood-opacity="0.25" result="color"/>
     <feComposite in="color" in2="blur" operator="in" result="shadow"/>
     <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
   </filter>
-  <filter id="title-glow" x="-10%" y="-40%" width="120%" height="180%">
-    <feGaussianBlur stdDeviation="6" result="blur"/>
+  <filter id="title-glow">
+    <feGaussianBlur stdDeviation="8" result="blur"/>
     <feFlood flood-color="#00d4ff" flood-opacity="0.5" result="color"/>
     <feComposite in="color" in2="blur" operator="in" result="shadow"/>
     <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
   </filter>
 
-  <marker id="arr-cyan"   markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-    <path d="M0,0 L0,6 L8,3 z" fill="#00d4ff"/>
-  </marker>
-  <marker id="arr-amber"  markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-    <path d="M0,0 L0,6 L8,3 z" fill="#ffaa00"/>
-  </marker>
-  <marker id="arr-pink"   markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-    <path d="M0,0 L0,6 L8,3 z" fill="#ff2d78"/>
-  </marker>
-  <marker id="arr-green"  markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-    <path d="M0,0 L0,6 L8,3 z" fill="#00e87a"/>
-  </marker>
-  <marker id="arr-purple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-    <path d="M0,0 L0,6 L8,3 z" fill="#a855f7"/>
-  </marker>
+  <marker id="arr-cyan"   markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L9,3.5 z" fill="#00d4ff"/></marker>
+  <marker id="arr-amber"  markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L9,3.5 z" fill="#ffaa00"/></marker>
+  <marker id="arr-pink"   markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L9,3.5 z" fill="#ff2d78"/></marker>
+  <marker id="arr-green"  markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L9,3.5 z" fill="#00e87a"/></marker>
+  <marker id="arr-purple" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L9,3.5 z" fill="#a855f7"/></marker>
 
-  <linearGradient id="card-fade" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.04"/>
+  <linearGradient id="card-shine" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.05"/>
     <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
   </linearGradient>
-
 </defs>
 
 <!-- BACKGROUND -->
@@ -83,415 +71,385 @@
 <rect width="1760" height="1100" fill="url(#dots)"/>
 
 <!-- Lane separators -->
-<line x1="438" y1="90" x2="438" y2="1070" stroke="#1a2e40" stroke-width="1" stroke-dasharray="4,6"/>
-<line x1="878" y1="90" x2="878" y2="1070" stroke="#1a2e40" stroke-width="1" stroke-dasharray="4,6"/>
-<line x1="1318" y1="90" x2="1318" y2="1070" stroke="#1a2e40" stroke-width="1" stroke-dasharray="4,6"/>
-
-<!-- ═══ TITLE ═══ -->
-<rect x="20" y="12" width="1720" height="66" rx="8" fill="#0c1520" opacity="0.95"/>
-<line x1="20" y1="78" x2="1740" y2="78" stroke="#00d4ff" stroke-width="1.2" opacity="0.4"/>
-
-<text x="880" y="46" text-anchor="middle" font-size="20" font-weight="700" fill="#00d4ff" filter="url(#title-glow)" letter-spacing="3">
-  B2B CUSTOMER BEHAVIORAL ANOMALY DETECTION
-</text>
-<text x="880" y="68" text-anchor="middle" font-size="11" fill="#5a7a96" letter-spacing="1">
-  UCI Online Retail II  ·  1,067,371 raw transactions  ·  5,878 customers  ·  11 behavioral features  ·  4 detectors + ensemble
-</text>
-
-<!-- Lane headers -->
-<text x="219"  y="98" text-anchor="middle" font-size="10" font-weight="700" fill="#00d4ff" opacity="0.75" letter-spacing="2">01 · INGEST</text>
-<text x="658"  y="98" text-anchor="middle" font-size="10" font-weight="700" fill="#ffaa00" opacity="0.75" letter-spacing="2">02 · FEATURES + PREP</text>
-<text x="1098" y="98" text-anchor="middle" font-size="10" font-weight="700" fill="#ff2d78" opacity="0.75" letter-spacing="2">03 · MODELS + ENSEMBLE</text>
-<text x="1538" y="98" text-anchor="middle" font-size="10" font-weight="700" fill="#00e87a" opacity="0.75" letter-spacing="2">04 · EVALUATE + TRACK</text>
+<line x1="438"  y1="86" x2="438"  y2="1010" stroke="#1a2e40" stroke-width="1" stroke-dasharray="5,7"/>
+<line x1="878"  y1="86" x2="878"  y2="1010" stroke="#1a2e40" stroke-width="1" stroke-dasharray="5,7"/>
+<line x1="1318" y1="86" x2="1318" y2="1010" stroke="#1a2e40" stroke-width="1" stroke-dasharray="5,7"/>
 
 
-<!-- ═══ LANE 1 — INGEST ═══ -->
+<!-- ════════════════════════════════════════════════════════ TITLE -->
+<rect x="16" y="10" width="1728" height="68" rx="10" fill="#0b141f" stroke="#1a3a52" stroke-width="1"/>
+<line x1="16" y1="78" x2="1744" y2="78" stroke="#00d4ff" stroke-width="1" opacity="0.35"/>
 
-<!-- Card: raw data -->
+<text x="880" y="46" text-anchor="middle" font-size="22" font-weight="700" fill="#00d4ff" filter="url(#title-glow)" letter-spacing="4">B2B CUSTOMER BEHAVIORAL ANOMALY DETECTION</text>
+<text x="880" y="68" text-anchor="middle" font-size="11.5" fill="#5a8aaa" letter-spacing="1.5">UCI Online Retail II  ·  1,067,371 transactions  ·  5,878 customers  ·  11 features  ·  IForest · LOF · COPOD · ECOD</text>
+
+<!-- Lane labels -->
+<text x="219"  y="96" text-anchor="middle" font-size="10" font-weight="700" fill="#00d4ff" opacity="0.8" letter-spacing="2">01 · INGEST</text>
+<text x="658"  y="96" text-anchor="middle" font-size="10" font-weight="700" fill="#ffaa00" opacity="0.8" letter-spacing="2">02 · FEATURES</text>
+<text x="1098" y="96" text-anchor="middle" font-size="10" font-weight="700" fill="#ff2d78" opacity="0.8" letter-spacing="2">03 · MODELS + ENSEMBLE</text>
+<text x="1538" y="96" text-anchor="middle" font-size="10" font-weight="700" fill="#00e87a" opacity="0.8" letter-spacing="2">04 · EVALUATE + TRACK</text>
+
+
+<!-- ════════════════════════════════════════════════════════ LANE 1 — INGEST -->
+
+<!-- RAW DATA -->
 <g filter="url(#glow-cyan)">
-  <rect x="30" y="112" width="398" height="100" rx="8" fill="#0c1824" stroke="#00d4ff" stroke-width="1.4"/>
-  <rect x="30" y="112" width="398" height="100" rx="8" fill="url(#card-fade)"/>
-  <rect x="30" y="112" width="398" height="7"   rx="4" fill="#00d4ff" opacity="0.8"/>
+  <rect x="28" y="108" width="400" height="114" rx="9" fill="#0b1a26" stroke="#00d4ff" stroke-width="1.5"/>
+  <rect x="28" y="108" width="400" height="114" rx="9" fill="url(#card-shine)"/>
+  <rect x="28" y="108" width="400" height="8"   rx="5" fill="#00d4ff" opacity="0.85"/>
 </g>
-<text x="52"  y="140" font-size="13" font-weight="700" fill="#dce8f5">online_retail_II.xlsx</text>
-<text x="418" y="130" text-anchor="end" font-size="9" fill="#00d4ff" opacity="0.7">data/</text>
-<text x="52"  y="160" font-size="11" fill="#6a9ab8">2 sheets  ·  1,067,371 rows  ·  8 columns</text>
-<text x="52"  y="178" font-size="11" fill="#6a9ab8">Invoice · StockCode · Qty · InvoiceDate · Price · Customer ID</text>
-<text x="52"  y="196" font-size="11" fill="#6a9ab8">Dec 2009  ──────────────────────────────  Dec 2011</text>
+<text x="50"  y="140" font-size="14" font-weight="700" fill="#e0eef8">online_retail_II.xlsx</text>
+<text x="420" y="130" text-anchor="end" font-size="9.5" fill="#00d4ff" opacity="0.75">data/</text>
+<text x="50"  y="164" font-size="11.5" fill="#6eaace">1,067,371 rows  ·  2 sheets  ·  8 columns</text>
+<text x="50"  y="186" font-size="11.5" fill="#6eaace">Dec 2009 ─────────────────────── Dec 2011</text>
+<text x="50"  y="208" font-size="10.5" fill="#3a6a88">Parquet cache  ·  0.89 s vs 125 s  ·  142× faster</text>
 
-<!-- Arrow down -->
-<line x1="229" y1="212" x2="229" y2="244" stroke="#00d4ff" stroke-width="1.8" marker-end="url(#arr-cyan)"/>
-<text x="240" y="232" font-size="9.5" fill="#00d4ff" opacity="0.8">load_raw()</text>
+<!-- arrow -->
+<line x1="228" y1="222" x2="228" y2="260" stroke="#00d4ff" stroke-width="2" marker-end="url(#arr-cyan)"/>
+<text x="240" y="246" font-size="10" fill="#00d4ff" opacity="0.8">load_raw() → clean()</text>
 
-<!-- Card: parquet speedup badge -->
-<rect x="30" y="246" width="398" height="32" rx="6" fill="#05111a" stroke="#00d4ff" stroke-width="0.8" opacity="0.7"/>
-<text x="52"  y="267" font-size="10" fill="#00d4ff" opacity="0.9">Parquet cache  ·  0.89s vs 125s Excel  ·  142x speedup</text>
-
-<!-- Arrow down -->
-<line x1="229" y1="278" x2="229" y2="308" stroke="#00d4ff" stroke-width="1.8" marker-end="url(#arr-cyan)"/>
-<text x="240" y="297" font-size="9.5" fill="#00d4ff" opacity="0.8">clean()</text>
-
-<!-- Card: clean -->
+<!-- CLEAN -->
 <g filter="url(#glow-cyan)">
-  <rect x="30" y="310" width="398" height="100" rx="8" fill="#0c1824" stroke="#00d4ff" stroke-width="1.4"/>
-  <rect x="30" y="310" width="398" height="100" rx="8" fill="url(#card-fade)"/>
-  <rect x="30" y="310" width="398" height="7"   rx="4" fill="#00d4ff" opacity="0.8"/>
+  <rect x="28" y="262" width="400" height="114" rx="9" fill="#0b1a26" stroke="#00d4ff" stroke-width="1.5"/>
+  <rect x="28" y="262" width="400" height="114" rx="9" fill="url(#card-shine)"/>
+  <rect x="28" y="262" width="400" height="8"   rx="5" fill="#00d4ff" opacity="0.85"/>
 </g>
-<text x="52"  y="338" font-size="13" font-weight="700" fill="#dce8f5">loader.clean()</text>
-<text x="418" y="328" text-anchor="end" font-size="9" fill="#00d4ff" opacity="0.7">data.loader</text>
-<text x="52"  y="358" font-size="11" fill="#6a9ab8">drop: cancellations (Invoice prefix C)</text>
-<text x="52"  y="376" font-size="11" fill="#6a9ab8">drop: missing Customer ID  ·  qty &lt;= 0  ·  price &lt;= 0  ·  dupes</text>
-<text x="52"  y="394" font-size="11" fill="#6a9ab8">Revenue = Quantity x Price  ·  Customer ID cast to str</text>
+<text x="50"  y="294" font-size="14" font-weight="700" fill="#e0eef8">loader.clean()</text>
+<text x="420" y="284" text-anchor="end" font-size="9.5" fill="#00d4ff" opacity="0.75">data.loader</text>
+<text x="50"  y="318" font-size="11.5" fill="#6eaace">drop cancellations  (Invoice prefix C)</text>
+<text x="50"  y="340" font-size="11.5" fill="#6eaace">drop: missing ID · qty≤0 · price≤0 · dupes</text>
+<text x="50"  y="362" font-size="11.5" fill="#6eaace">Revenue = Qty × Price  ·  Customer ID → str</text>
 
-<!-- Stats callout -->
-<rect x="30" y="424" width="398" height="72" rx="6" fill="#060a10" stroke="#1a3a52" stroke-width="1.2"/>
-<text x="52"  y="448" font-size="14" font-weight="700" fill="#00d4ff">779,425</text>
-<text x="172" y="448" font-size="11" fill="#6a9ab8">clean transactions  (73% of raw)</text>
-<text x="52"  y="470" font-size="14" font-weight="700" fill="#00d4ff">5,878</text>
-<text x="172" y="470" font-size="11" fill="#6a9ab8">unique customers</text>
-<text x="52"  y="488" font-size="11" fill="#6a9ab8">Dec 01 2009  →  Dec 09 2011</text>
+<!-- STATS -->
+<rect x="28" y="390" width="400" height="90" rx="8" fill="#060c14" stroke="#1e3d58" stroke-width="1.2"/>
+<text x="50"  y="420" font-size="28" font-weight="700" fill="#00d4ff">779,425</text>
+<text x="50"  y="440" font-size="11.5" fill="#6eaace">clean transactions  (73% retained)</text>
+<text x="50"  y="462" font-size="18" font-weight="700" fill="#00d4ff">5,878</text>
+<text x="160" y="462" font-size="11.5" fill="#6eaace">unique customers</text>
 
 
-<!-- ═══ LANE 2 — FEATURES + PREP ═══ -->
+<!-- ════════════════════════════════════════════════════════ LANE 2 — FEATURES -->
 
-<!-- Cross-lane arrow: clean → features -->
-<path d="M428,360 H448 Q458,360 458,360 H470" stroke="#00d4ff" stroke-width="1.6" fill="none" marker-end="url(#arr-cyan)" stroke-dasharray="5,3"/>
+<!-- cross-lane arrow -->
+<path d="M428,326 H448 Q460,326 460,326 H470" stroke="#00d4ff" stroke-width="1.8" fill="none" marker-end="url(#arr-cyan)" stroke-dasharray="5,4"/>
 
-<!-- Card: feature engineering -->
+<!-- FEATURE ENGINEERING -->
 <g filter="url(#glow-amber)">
-  <rect x="448" y="112" width="420" height="100" rx="8" fill="#131008" stroke="#ffaa00" stroke-width="1.4"/>
-  <rect x="448" y="112" width="420" height="100" rx="8" fill="url(#card-fade)"/>
-  <rect x="448" y="112" width="420" height="7"   rx="4" fill="#ffaa00" opacity="0.8"/>
+  <rect x="448" y="108" width="420" height="114" rx="9" fill="#12100a" stroke="#ffaa00" stroke-width="1.5"/>
+  <rect x="448" y="108" width="420" height="114" rx="9" fill="url(#card-shine)"/>
+  <rect x="448" y="108" width="420" height="8"   rx="5" fill="#ffaa00" opacity="0.85"/>
 </g>
-<text x="468" y="140" font-size="13" font-weight="700" fill="#dce8f5">build_customer_features()</text>
-<text x="858" y="130" text-anchor="end" font-size="9" fill="#ffaa00" opacity="0.7">features.engineer</text>
-<text x="468" y="160" font-size="11" fill="#6a9ab8">per-customer behavioral profile  ·  snapshot = max(date) + 1d</text>
-<text x="468" y="178" font-size="11" fill="#6a9ab8">median imputation  ·  OLS slope on monthly revenue aggregates</text>
-<text x="468" y="196" font-size="11" fill="#6a9ab8">output: DataFrame[Customer ID x 11 features]   —   0 NaNs</text>
+<text x="470" y="140" font-size="14" font-weight="700" fill="#e0eef8">build_customer_features()</text>
+<text x="860" y="130" text-anchor="end" font-size="9.5" fill="#ffaa00" opacity="0.75">features.engineer</text>
+<text x="470" y="164" font-size="11.5" fill="#c8a85a">11 behavioral features per customer</text>
+<text x="470" y="186" font-size="11.5" fill="#c8a85a">snapshot = max(InvoiceDate) + 1d</text>
+<text x="470" y="208" font-size="11.5" fill="#c8a85a">OLS revenue slope · median imputation · 0 NaNs</text>
 
-<!-- Feature pills -->
-<text x="468" y="226" font-size="9.5" fill="#ffaa00" opacity="0.65" letter-spacing="1">FEATURE GROUPS</text>
+<!-- Feature pills — 3 rows × 2 cols -->
+<text x="470" y="242" font-size="10" fill="#ffaa00" opacity="0.7" letter-spacing="1.5">FEATURE GROUPS</text>
 
-<rect x="448" y="232" width="200" height="32" rx="5" fill="#0e0c06" stroke="#ffaa00" stroke-width="0.9" opacity="0.85"/>
-<text x="460" y="252" font-size="10" font-weight="700" fill="#ffaa00">RFM</text>
-<text x="500" y="252" font-size="10" fill="#6a9ab8">recency · orders · revenue</text>
+<rect x="450" y="250" width="198" height="36" rx="6" fill="#0e0c06" stroke="#ffaa00" stroke-width="1" opacity="0.9"/>
+<text x="462" y="273" font-size="11" font-weight="700" fill="#ffaa00">RFM</text>
+<text x="504" y="273" font-size="10.5" fill="#8aac70">recency · orders · revenue</text>
 
-<rect x="658" y="232" width="204" height="32" rx="5" fill="#0e0c06" stroke="#ffaa00" stroke-width="0.9" opacity="0.85"/>
-<text x="670" y="252" font-size="10" font-weight="700" fill="#ffaa00">VALUE</text>
-<text x="716" y="252" font-size="10" fill="#6a9ab8">mean_order · CV</text>
+<rect x="658" y="250" width="202" height="36" rx="6" fill="#0e0c06" stroke="#ffaa00" stroke-width="1" opacity="0.9"/>
+<text x="670" y="273" font-size="11" font-weight="700" fill="#ffaa00">VALUE</text>
+<text x="718" y="273" font-size="10.5" fill="#8aac70">mean_order · CV</text>
 
-<rect x="448" y="270" width="200" height="32" rx="5" fill="#0e0c06" stroke="#ffaa00" stroke-width="0.9" opacity="0.85"/>
-<text x="460" y="290" font-size="10" font-weight="700" fill="#ffaa00">VOLUME</text>
-<text x="518" y="290" font-size="10" fill="#6a9ab8">mean_qty · CV</text>
+<rect x="450" y="294" width="198" height="36" rx="6" fill="#0e0c06" stroke="#ffaa00" stroke-width="1" opacity="0.9"/>
+<text x="462" y="317" font-size="11" font-weight="700" fill="#ffaa00">VOLUME</text>
+<text x="522" y="317" font-size="10.5" fill="#8aac70">mean_qty · CV</text>
 
-<rect x="658" y="270" width="204" height="32" rx="5" fill="#0e0c06" stroke="#ffaa00" stroke-width="0.9" opacity="0.85"/>
-<text x="670" y="290" font-size="10" font-weight="700" fill="#ffaa00">BASKET</text>
-<text x="722" y="290" font-size="10" fill="#6a9ab8">unique SKUs / invoice</text>
+<rect x="658" y="294" width="202" height="36" rx="6" fill="#0e0c06" stroke="#ffaa00" stroke-width="1" opacity="0.9"/>
+<text x="670" y="317" font-size="11" font-weight="700" fill="#ffaa00">BASKET</text>
+<text x="726" y="317" font-size="10.5" fill="#8aac70">SKUs / invoice</text>
 
-<rect x="448" y="308" width="200" height="32" rx="5" fill="#060c0e" stroke="#00d4ff" stroke-width="0.9" opacity="0.85"/>
-<text x="460" y="328" font-size="10" font-weight="700" fill="#00d4ff">TIMING</text>
-<text x="512" y="328" font-size="10" fill="#6a9ab8">iod_mean · iod_std</text>
+<rect x="450" y="338" width="198" height="36" rx="6" fill="#060d10" stroke="#00d4ff" stroke-width="1" opacity="0.9"/>
+<text x="462" y="361" font-size="11" font-weight="700" fill="#00d4ff">TIMING</text>
+<text x="514" y="361" font-size="10.5" fill="#8aac70">iod_mean · iod_std</text>
 
-<rect x="658" y="308" width="204" height="32" rx="5" fill="#060e0a" stroke="#00e87a" stroke-width="0.9" opacity="0.85"/>
-<text x="670" y="328" font-size="10" font-weight="700" fill="#00e87a">TREND</text>
-<text x="714" y="328" font-size="10" fill="#6a9ab8">OLS slope monthly revenue</text>
+<rect x="658" y="338" width="202" height="36" rx="6" fill="#060e0a" stroke="#00e87a" stroke-width="1" opacity="0.9"/>
+<text x="670" y="361" font-size="11" font-weight="700" fill="#00e87a">TREND</text>
+<text x="716" y="361" font-size="10.5" fill="#8aac70">OLS monthly revenue</text>
 
-<!-- Arrow: features → scaler -->
-<line x1="658" y1="346" x2="658" y2="376" stroke="#ffaa00" stroke-width="1.8" marker-end="url(#arr-amber)"/>
+<!-- arrow: pills → scaler -->
+<line x1="658" y1="382" x2="658" y2="418" stroke="#ffaa00" stroke-width="2" marker-end="url(#arr-amber)"/>
 
-<!-- Card: scaler block -->
-<rect x="448" y="378" width="420" height="74" rx="8" fill="#0e0e18" stroke="#3a5a78" stroke-width="1.2"/>
-<rect x="448" y="378" width="420" height="74" rx="8" fill="url(#card-fade)"/>
-<rect x="448" y="378" width="420" height="5"  rx="3" fill="#3a5a78" opacity="0.8"/>
+<!-- SCALER -->
+<rect x="448" y="420" width="420" height="82" rx="9" fill="#0d0d1a" stroke="#3a5a88" stroke-width="1.3"/>
+<rect x="448" y="420" width="420" height="82" rx="9" fill="url(#card-shine)"/>
+<rect x="448" y="420" width="420" height="6"  rx="4" fill="#3a5a88" opacity="0.9"/>
 
-<rect x="460" y="390" width="188" height="50" rx="6" fill="#0a0a14" stroke="#3a5a78" stroke-width="0.9"/>
-<text x="554" y="411" text-anchor="middle" font-size="11" font-weight="600" fill="#c8dff0">SimpleImputer</text>
-<text x="554" y="428" text-anchor="middle" font-size="10" fill="#6a9ab8">strategy = median</text>
+<rect x="460" y="434" width="188" height="56" rx="7" fill="#08081a" stroke="#3a5a88" stroke-width="1"/>
+<text x="554" y="458" text-anchor="middle" font-size="12" font-weight="600" fill="#c0d8f0">SimpleImputer</text>
+<text x="554" y="478" text-anchor="middle" font-size="10.5" fill="#6eaace">strategy = median</text>
 
-<text x="656" y="413" text-anchor="middle" font-size="16" fill="#5a8ab0">→</text>
+<text x="655" y="462" text-anchor="middle" font-size="20" fill="#4a7aaa">→</text>
 
-<rect x="664" y="390" width="194" height="50" rx="6" fill="#0a0a14" stroke="#3a5a78" stroke-width="0.9"/>
-<text x="761" y="411" text-anchor="middle" font-size="11" font-weight="600" fill="#c8dff0">StandardScaler</text>
-<text x="761" y="428" text-anchor="middle" font-size="10" fill="#6a9ab8">zero-mean · unit-variance</text>
-<text x="858" y="382" text-anchor="end" font-size="9" fill="#5a8ab0" opacity="0.8">sklearn</text>
+<rect x="663" y="434" width="195" height="56" rx="7" fill="#08081a" stroke="#3a5a88" stroke-width="1"/>
+<text x="760" y="458" text-anchor="middle" font-size="12" font-weight="600" fill="#c0d8f0">StandardScaler</text>
+<text x="760" y="478" text-anchor="middle" font-size="10.5" fill="#6eaace">zero-mean · unit-variance</text>
+<text x="860" y="426" text-anchor="end" font-size="9.5" fill="#4a7aaa">sklearn</text>
 
-<!-- Arrow: scaler → inject -->
-<line x1="658" y1="452" x2="658" y2="484" stroke="#ff2d78" stroke-width="1.8" marker-end="url(#arr-pink)"/>
+<!-- arrow: scaler → inject -->
+<line x1="658" y1="502" x2="658" y2="540" stroke="#ff2d78" stroke-width="2" marker-end="url(#arr-pink)"/>
 
-<!-- Card: inject anomalies -->
+<!-- INJECT -->
 <g filter="url(#glow-pink)">
-  <rect x="448" y="486" width="420" height="96" rx="8" fill="#130810" stroke="#ff2d78" stroke-width="1.4"/>
-  <rect x="448" y="486" width="420" height="96" rx="8" fill="url(#card-fade)"/>
-  <rect x="448" y="486" width="420" height="7"  rx="4" fill="#ff2d78" opacity="0.8"/>
+  <rect x="448" y="542" width="420" height="114" rx="9" fill="#12060f" stroke="#ff2d78" stroke-width="1.5"/>
+  <rect x="448" y="542" width="420" height="114" rx="9" fill="url(#card-shine)"/>
+  <rect x="448" y="542" width="420" height="8"   rx="5" fill="#ff2d78" opacity="0.85"/>
 </g>
-<text x="468" y="514" font-size="13" font-weight="700" fill="#dce8f5">inject_anomalies()</text>
-<text x="858" y="504" text-anchor="end" font-size="9" fill="#ff2d78" opacity="0.7">evaluation.synthetic</text>
-<text x="468" y="534" font-size="11" fill="#6a9ab8">5% of customers  ·  labels_true for recall evaluation only</text>
+<text x="470" y="574" font-size="14" font-weight="700" fill="#e0eef8">inject_anomalies()</text>
+<text x="860" y="564" text-anchor="end" font-size="9.5" fill="#ff2d78" opacity="0.75">evaluation.synthetic</text>
+<text x="470" y="598" font-size="11.5" fill="#cc7aaa">plant 5% synthetic anomalies for recall eval</text>
 
-<rect x="452" y="544" width="104" height="26" rx="4" fill="#1a0512" stroke="#ff2d78" stroke-width="0.8"/>
-<text x="504" y="561" text-anchor="middle" font-size="9" fill="#ff2d78">volume_spike</text>
+<rect x="452" y="610" width="108" height="28" rx="5" fill="#1a0514" stroke="#ff2d78" stroke-width="0.9"/>
+<text x="506" y="628" text-anchor="middle" font-size="10" fill="#ff6aaa">volume_spike</text>
 
-<rect x="562" y="544" width="120" height="26" rx="4" fill="#1a0512" stroke="#ff2d78" stroke-width="0.8"/>
-<text x="622" y="561" text-anchor="middle" font-size="9" fill="#ff2d78">revenue_collapse</text>
+<rect x="568" y="610" width="124" height="28" rx="5" fill="#1a0514" stroke="#ff2d78" stroke-width="0.9"/>
+<text x="630" y="628" text-anchor="middle" font-size="10" fill="#ff6aaa">revenue_collapse</text>
 
-<rect x="688" y="544" width="114" height="26" rx="4" fill="#1a0512" stroke="#ff2d78" stroke-width="0.8"/>
-<text x="745" y="561" text-anchor="middle" font-size="9" fill="#ff2d78">frequency_drop</text>
+<rect x="700" y="610" width="118" height="28" rx="5" fill="#1a0514" stroke="#ff2d78" stroke-width="0.9"/>
+<text x="759" y="628" text-anchor="middle" font-size="10" fill="#ff6aaa">frequency_drop</text>
 
-<rect x="808" y="544" width="56" height="26" rx="4" fill="#1a0512" stroke="#ff2d78" stroke-width="0.8" opacity="0.7"/>
-<text x="836" y="561" text-anchor="middle" font-size="9" fill="#ff2d78" opacity="0.7">timing</text>
+<rect x="826" y="610" width="36" height="28" rx="5" fill="#1a0514" stroke="#ff2d78" stroke-width="0.8" opacity="0.6"/>
+<text x="844" y="628" text-anchor="middle" font-size="9" fill="#ff6aaa" opacity="0.7">…</text>
 
-<text x="468" y="576" font-size="10" fill="#6a9ab8">x3-5  ·  x0.1  ·  x4-6  ·  x5-10  (random per customer)</text>
+<text x="470" y="648" font-size="10.5" fill="#6a4a62">multipliers: ×3-5  ·  ×0.1  ·  ×4-6  ·  ×5-10</text>
 
 
-<!-- ═══ LANE 3 — MODELS + ENSEMBLE ═══ -->
+<!-- ════════════════════════════════════════════════════════ LANE 3 — MODELS -->
 
-<!-- Cross-lane: scaler → models (X_scaled) -->
-<path d="M868,415 H888 Q898,415 898,415 H908" stroke="#ff2d78" stroke-width="1.6" fill="none" marker-end="url(#arr-pink)" stroke-dasharray="5,3"/>
-<text x="875" y="408" font-size="9" fill="#ff2d78" opacity="0.8">X_scaled</text>
+<!-- cross-lane: scaler → models -->
+<path d="M868,462 H888 Q898,462 898,462 H908" stroke="#ff2d78" stroke-width="1.8" fill="none" marker-end="url(#arr-pink)" stroke-dasharray="5,4"/>
+<text x="875" y="455" font-size="9.5" fill="#ff2d78" opacity="0.8">X_scaled</text>
 
-<!-- Model: IsolationForest -->
+<!-- IFOREST -->
 <g filter="url(#glow-pink)">
-  <rect x="888" y="112" width="420" height="86" rx="8" fill="#130810" stroke="#ff2d78" stroke-width="1.4"/>
-  <rect x="888" y="112" width="420" height="86" rx="8" fill="url(#card-fade)"/>
-  <rect x="888" y="112" width="420" height="7"  rx="4" fill="#ff2d78" opacity="0.8"/>
+  <rect x="888" y="108" width="420" height="100" rx="9" fill="#12060f" stroke="#ff2d78" stroke-width="1.5"/>
+  <rect x="888" y="108" width="420" height="100" rx="9" fill="url(#card-shine)"/>
+  <rect x="888" y="108" width="420" height="8"   rx="5" fill="#ff2d78" opacity="0.85"/>
 </g>
-<text x="908" y="140" font-size="13" font-weight="700" fill="#dce8f5">Isolation Forest</text>
-<text x="1298" y="130" text-anchor="end" font-size="9" fill="#ff2d78" opacity="0.7">pyod.IForest</text>
-<text x="908" y="160" font-size="11" fill="#6a9ab8">n_estimators=200  ·  contamination=0.05  ·  seed=42</text>
-<text x="908" y="178" font-size="11" fill="#6a9ab8">global outliers via random partitions  ·  F1=0.133  PR-AUC=0.103</text>
+<text x="910" y="140" font-size="14" font-weight="700" fill="#e0eef8">Isolation Forest</text>
+<text x="1300" y="130" text-anchor="end" font-size="9.5" fill="#ff2d78" opacity="0.75">pyod.IForest</text>
+<text x="910" y="164" font-size="11.5" fill="#cc7aaa">n_estimators=200  ·  contamination=0.05</text>
+<text x="910" y="188" font-size="11.5" fill="#cc7aaa">F1 = 0.133     PR-AUC = 0.103</text>
 
-<line x1="1098" y1="198" x2="1098" y2="224" stroke="#ff2d78" stroke-width="1.4" marker-end="url(#arr-pink)"/>
+<line x1="1098" y1="208" x2="1098" y2="240" stroke="#ff2d78" stroke-width="1.8" marker-end="url(#arr-pink)"/>
 
-<!-- Model: LOF -->
+<!-- LOF -->
 <g filter="url(#glow-pink)">
-  <rect x="888" y="226" width="420" height="86" rx="8" fill="#130810" stroke="#ff2d78" stroke-width="1.4"/>
-  <rect x="888" y="226" width="420" height="86" rx="8" fill="url(#card-fade)"/>
-  <rect x="888" y="226" width="420" height="7"  rx="4" fill="#ff2d78" opacity="0.8"/>
+  <rect x="888" y="242" width="420" height="100" rx="9" fill="#12060f" stroke="#ff2d78" stroke-width="1.5"/>
+  <rect x="888" y="242" width="420" height="100" rx="9" fill="url(#card-shine)"/>
+  <rect x="888" y="242" width="420" height="8"   rx="5" fill="#ff2d78" opacity="0.85"/>
 </g>
-<text x="908" y="254" font-size="13" font-weight="700" fill="#dce8f5">LOF</text>
-<text x="1298" y="244" text-anchor="end" font-size="9" fill="#ff2d78" opacity="0.7">pyod.LOF</text>
-<text x="908" y="274" font-size="11" fill="#6a9ab8">n_neighbors=20  ·  contamination=0.05</text>
-<text x="908" y="292" font-size="11" fill="#00e87a">local density deviation  ·  F1=0.174  PR-AUC=0.123  ★ best</text>
+<text x="910" y="274" font-size="14" font-weight="700" fill="#e0eef8">LOF</text>
+<text x="1300" y="264" text-anchor="end" font-size="9.5" fill="#ff2d78" opacity="0.75">pyod.LOF</text>
+<text x="910" y="298" font-size="11.5" fill="#cc7aaa">n_neighbors=20  ·  local density deviation</text>
+<text x="910" y="322" font-size="12" fill="#00e87a" font-weight="600">F1 = 0.174     PR-AUC = 0.123   ★  best</text>
 
-<line x1="1098" y1="312" x2="1098" y2="338" stroke="#ff2d78" stroke-width="1.4" marker-end="url(#arr-pink)"/>
+<line x1="1098" y1="342" x2="1098" y2="374" stroke="#ff2d78" stroke-width="1.8" marker-end="url(#arr-pink)"/>
 
-<!-- Model: COPOD -->
+<!-- COPOD -->
 <g filter="url(#glow-pink)">
-  <rect x="888" y="340" width="420" height="86" rx="8" fill="#130810" stroke="#ff2d78" stroke-width="1.4"/>
-  <rect x="888" y="340" width="420" height="86" rx="8" fill="url(#card-fade)"/>
-  <rect x="888" y="340" width="420" height="7"  rx="4" fill="#ff2d78" opacity="0.8"/>
+  <rect x="888" y="376" width="420" height="100" rx="9" fill="#12060f" stroke="#ff2d78" stroke-width="1.5"/>
+  <rect x="888" y="376" width="420" height="100" rx="9" fill="url(#card-shine)"/>
+  <rect x="888" y="376" width="420" height="8"   rx="5" fill="#ff2d78" opacity="0.85"/>
 </g>
-<text x="908" y="368" font-size="13" font-weight="700" fill="#dce8f5">COPOD</text>
-<text x="1298" y="358" text-anchor="end" font-size="9" fill="#ff2d78" opacity="0.7">pyod.COPOD</text>
-<text x="908" y="388" font-size="11" fill="#6a9ab8">copula-based  ·  no hyperparams  ·  handles correlations</text>
-<text x="908" y="406" font-size="11" fill="#6a9ab8">F1=0.085  PR-AUC=0.082  ·  replaces HBOS</text>
+<text x="910" y="408" font-size="14" font-weight="700" fill="#e0eef8">COPOD</text>
+<text x="1300" y="398" text-anchor="end" font-size="9.5" fill="#ff2d78" opacity="0.75">pyod.COPOD</text>
+<text x="910" y="432" font-size="11.5" fill="#cc7aaa">copula-based  ·  no hyperparams  ·  handles correlations</text>
+<text x="910" y="456" font-size="11.5" fill="#cc7aaa">F1 = 0.085     PR-AUC = 0.082</text>
 
-<line x1="1098" y1="426" x2="1098" y2="452" stroke="#ff2d78" stroke-width="1.4" marker-end="url(#arr-pink)"/>
+<line x1="1098" y1="476" x2="1098" y2="508" stroke="#ff2d78" stroke-width="1.8" marker-end="url(#arr-pink)"/>
 
-<!-- Model: ECOD -->
+<!-- ECOD -->
 <g filter="url(#glow-pink)">
-  <rect x="888" y="454" width="420" height="86" rx="8" fill="#130810" stroke="#ff2d78" stroke-width="1.4"/>
-  <rect x="888" y="454" width="420" height="86" rx="8" fill="url(#card-fade)"/>
-  <rect x="888" y="454" width="420" height="7"  rx="4" fill="#ff2d78" opacity="0.8"/>
+  <rect x="888" y="510" width="420" height="100" rx="9" fill="#12060f" stroke="#ff2d78" stroke-width="1.5"/>
+  <rect x="888" y="510" width="420" height="100" rx="9" fill="url(#card-shine)"/>
+  <rect x="888" y="510" width="420" height="8"   rx="5" fill="#ff2d78" opacity="0.85"/>
 </g>
-<text x="908" y="482" font-size="13" font-weight="700" fill="#dce8f5">ECOD</text>
-<text x="1298" y="472" text-anchor="end" font-size="9" fill="#ff2d78" opacity="0.7">pyod.ECOD</text>
-<text x="908" y="502" font-size="11" fill="#6a9ab8">empirical CDF tail-based  ·  no hyperparams  ·  O(n log n)</text>
-<text x="908" y="520" font-size="11" fill="#6a9ab8">F1=0.099  PR-AUC=0.085  ·  replaces HBOS</text>
+<text x="910" y="542" font-size="14" font-weight="700" fill="#e0eef8">ECOD</text>
+<text x="1300" y="532" text-anchor="end" font-size="9.5" fill="#ff2d78" opacity="0.75">pyod.ECOD</text>
+<text x="910" y="566" font-size="11.5" fill="#cc7aaa">empirical CDF tails  ·  no hyperparams  ·  O(n log n)</text>
+<text x="910" y="590" font-size="11.5" fill="#cc7aaa">F1 = 0.099     PR-AUC = 0.085</text>
 
-<!-- Fan-in connector lines -->
-<text x="908" y="556" font-size="9.5" fill="#ff2d78" opacity="0.6">decision_scores_  ↓</text>
-<path d="M988,150  L988,570 Q988,580 998,580 H1058"  stroke="#ff2d78" stroke-width="1" fill="none" stroke-dasharray="3,4" opacity="0.35"/>
-<path d="M1098,312 V570"                              stroke="#ff2d78" stroke-width="1" fill="none" stroke-dasharray="3,4" opacity="0.35"/>
-<path d="M1200,150 L1200,570 Q1200,580 1190,580 H1140" stroke="#ff2d78" stroke-width="1" fill="none" stroke-dasharray="3,4" opacity="0.35"/>
-<line x1="1098" y1="570" x2="1098" y2="592" stroke="#a855f7" stroke-width="1.8" marker-end="url(#arr-purple)"/>
+<!-- fan-in to ensemble -->
+<path d="M988,210  L988,628 Q988,638 998,638 H1048"  stroke="#a855f7" stroke-width="1" fill="none" stroke-dasharray="3,5" opacity="0.4"/>
+<path d="M1098,342 V628"                              stroke="#a855f7" stroke-width="1" fill="none" stroke-dasharray="3,5" opacity="0.4"/>
+<path d="M1210,210 L1210,628 Q1210,638 1200,638 H1148" stroke="#a855f7" stroke-width="1" fill="none" stroke-dasharray="3,5" opacity="0.4"/>
+<text x="1000" y="618" font-size="9.5" fill="#a855f7" opacity="0.6">decision_scores_  ↓</text>
+<line x1="1098" y1="636" x2="1098" y2="664" stroke="#a855f7" stroke-width="2" marker-end="url(#arr-purple)"/>
 
-<!-- Card: Ensemble -->
+<!-- ENSEMBLE -->
 <g filter="url(#glow-purple)">
-  <rect x="888" y="594" width="420" height="96" rx="8" fill="#100c18" stroke="#a855f7" stroke-width="1.4"/>
-  <rect x="888" y="594" width="420" height="96" rx="8" fill="url(#card-fade)"/>
-  <rect x="888" y="594" width="420" height="7"  rx="4" fill="#a855f7" opacity="0.8"/>
+  <rect x="888" y="666" width="420" height="108" rx="9" fill="#0e0a1a" stroke="#a855f7" stroke-width="1.5"/>
+  <rect x="888" y="666" width="420" height="108" rx="9" fill="url(#card-shine)"/>
+  <rect x="888" y="666" width="420" height="8"   rx="5" fill="#a855f7" opacity="0.85"/>
 </g>
-<text x="908" y="622" font-size="13" font-weight="700" fill="#dce8f5">Score Ensemble</text>
-<text x="1298" y="612" text-anchor="end" font-size="9" fill="#a855f7" opacity="0.7">models.detector</text>
-<text x="908" y="642" font-size="11" fill="#6a9ab8">min-max norm per model  →  column average  →  threshold @ p95</text>
-
-<rect x="908" y="652" width="390" height="30" rx="4" fill="#0c0a18" stroke="#a855f7" stroke-width="0.8" opacity="0.8"/>
-<text x="1103" y="671" text-anchor="middle" font-size="10" fill="#a855f7" font-weight="600">
+<text x="910" y="698" font-size="14" font-weight="700" fill="#e0eef8">Score Ensemble</text>
+<text x="1300" y="688" text-anchor="end" font-size="9.5" fill="#a855f7" opacity="0.75">models.detector</text>
+<text x="910" y="722" font-size="11.5" fill="#a888e0">min-max norm per model  →  average  →  threshold @p95</text>
+<rect x="910" y="734" width="388" height="32" rx="5" fill="#09061a" stroke="#a855f7" stroke-width="0.9" opacity="0.9"/>
+<text x="1104" y="754" text-anchor="middle" font-size="10.5" fill="#c07af0" font-weight="600">
   ens = mean( norm(IForest), norm(LOF), norm(COPOD), norm(ECOD) )
 </text>
 
 
-<!-- ═══ LANE 4 — EVALUATE + TRACK ═══ -->
+<!-- ════════════════════════════════════════════════════════ LANE 4 — EVALUATE -->
 
-<!-- Cross-lane: ensemble → evaluate -->
-<path d="M1308,641 H1328 Q1338,641 1338,641 H1348" stroke="#a855f7" stroke-width="1.6" fill="none" marker-end="url(#arr-purple)" stroke-dasharray="5,3"/>
+<!-- cross-lane: ensemble → eval -->
+<path d="M1308,720 H1328 Q1340,720 1340,720 H1348" stroke="#a855f7" stroke-width="1.8" fill="none" marker-end="url(#arr-purple)" stroke-dasharray="5,4"/>
 
-<!-- Card: HITL -->
+<!-- HITL -->
 <g filter="url(#glow-green)">
-  <rect x="1328" y="112" width="412" height="96" rx="8" fill="#07130e" stroke="#00e87a" stroke-width="1.4"/>
-  <rect x="1328" y="112" width="412" height="96" rx="8" fill="url(#card-fade)"/>
-  <rect x="1328" y="112" width="412" height="7"  rx="4" fill="#00e87a" opacity="0.8"/>
+  <rect x="1328" y="108" width="412" height="114" rx="9" fill="#070f0a" stroke="#00e87a" stroke-width="1.5"/>
+  <rect x="1328" y="108" width="412" height="114" rx="9" fill="url(#card-shine)"/>
+  <rect x="1328" y="108" width="412" height="8"   rx="5" fill="#00e87a" opacity="0.85"/>
 </g>
-<text x="1348" y="140" font-size="13" font-weight="700" fill="#dce8f5">HITL Simulation</text>
-<text x="1730" y="130" text-anchor="end" font-size="9" fill="#00e87a" opacity="0.7">evaluation.hitl</text>
-<text x="1348" y="160" font-size="11" fill="#6a9ab8">12-week control-team review loop  ·  20 flagged records / week</text>
-<text x="1348" y="178" font-size="11" fill="#6a9ab8">cumulative TP/FP accumulation  ·  live precision estimate</text>
-<text x="1348" y="196" font-size="11" fill="#00e87a">final precision wk12 = 0.179  ·  total reviewed = 240</text>
+<text x="1350" y="140" font-size="14" font-weight="700" fill="#e0eef8">HITL Simulation</text>
+<text x="1732" y="130" text-anchor="end" font-size="9.5" fill="#00e87a" opacity="0.75">evaluation.hitl</text>
+<text x="1350" y="164" font-size="11.5" fill="#6ecca0">12-week review loop  ·  20 records / week</text>
+<text x="1350" y="186" font-size="11.5" fill="#6ecca0">cumulative TP/FP  ·  live precision tracking</text>
+<text x="1350" y="208" font-size="12" fill="#00e87a" font-weight="600">precision @ week 12  =  0.179</text>
 
-<line x1="1534" y1="208" x2="1534" y2="236" stroke="#00e87a" stroke-width="1.5" marker-end="url(#arr-green)"/>
+<line x1="1534" y1="222" x2="1534" y2="256" stroke="#00e87a" stroke-width="1.8" marker-end="url(#arr-green)"/>
 
-<!-- Card: PSI -->
+<!-- PSI -->
 <g filter="url(#glow-green)">
-  <rect x="1328" y="238" width="412" height="114" rx="8" fill="#07130e" stroke="#00e87a" stroke-width="1.4"/>
-  <rect x="1328" y="238" width="412" height="114" rx="8" fill="url(#card-fade)"/>
-  <rect x="1328" y="238" width="412" height="7"   rx="4" fill="#00e87a" opacity="0.8"/>
+  <rect x="1328" y="258" width="412" height="130" rx="9" fill="#070f0a" stroke="#00e87a" stroke-width="1.5"/>
+  <rect x="1328" y="258" width="412" height="130" rx="9" fill="url(#card-shine)"/>
+  <rect x="1328" y="258" width="412" height="8"   rx="5" fill="#00e87a" opacity="0.85"/>
 </g>
-<text x="1348" y="266" font-size="13" font-weight="700" fill="#dce8f5">PSI Monitor</text>
-<text x="1730" y="256" text-anchor="end" font-size="9" fill="#00e87a" opacity="0.7">evaluation.psi</text>
-<text x="1348" y="286" font-size="11" fill="#6a9ab8">feature drift  ·  year 2009-10  vs  year 2010-11  ·  10 bins</text>
+<text x="1350" y="290" font-size="14" font-weight="700" fill="#e0eef8">PSI Monitor</text>
+<text x="1732" y="280" text-anchor="end" font-size="9.5" fill="#00e87a" opacity="0.75">evaluation.psi</text>
+<text x="1350" y="314" font-size="11.5" fill="#6ecca0">feature drift  ·  year 2009-10 vs 2010-11</text>
 
-<rect x="1348" y="296" width="120" height="24" rx="4" fill="#07130e" stroke="#00e87a"  stroke-width="0.9"/>
-<text x="1408" y="312" text-anchor="middle" font-size="10" fill="#00e87a">PSI &lt; 0.10  STABLE</text>
+<rect x="1350" y="324" width="118" height="28" rx="5" fill="#070f0a" stroke="#00e87a"  stroke-width="1"/>
+<text x="1409" y="342" text-anchor="middle" font-size="10.5" fill="#00e87a">PSI&lt;0.10 STABLE</text>
 
-<rect x="1476" y="296" width="126" height="24" rx="4" fill="#130e06" stroke="#ffaa00" stroke-width="0.9"/>
-<text x="1539" y="312" text-anchor="middle" font-size="10" fill="#ffaa00">0.10-0.20  SLIGHT</text>
+<rect x="1476" y="324" width="122" height="28" rx="5" fill="#130e06" stroke="#ffaa00" stroke-width="1"/>
+<text x="1537" y="342" text-anchor="middle" font-size="10.5" fill="#ffaa00">0.10-0.20 SLIGHT</text>
 
-<rect x="1610" y="296" width="122" height="24" rx="4" fill="#130610" stroke="#ff2d78" stroke-width="0.9"/>
-<text x="1671" y="312" text-anchor="middle" font-size="10" fill="#ff2d78">&gt; 0.20  RETRAIN</text>
+<rect x="1606" y="324" width="126" height="28" rx="5" fill="#130610" stroke="#ff2d78" stroke-width="1"/>
+<text x="1669" y="342" text-anchor="middle" font-size="10.5" fill="#ff2d78">&gt;0.20 RETRAIN</text>
 
-<text x="1348" y="334" font-size="11" fill="#6a9ab8">10 of 11 features STABLE  ·  PSI = 0.0</text>
-<text x="1348" y="352" font-size="11" fill="#ffaa00">recency_days PSI = 1.58  (expected — fixed snapshot date)</text>
+<text x="1350" y="370" font-size="11.5" fill="#6ecca0">10 features STABLE  ·  PSI = 0.0</text>
+<text x="1350" y="390" font-size="11" fill="#cc9a44">recency_days = 1.58  (expected — fixed snapshot)</text>
 
-<line x1="1534" y1="352" x2="1534" y2="382" stroke="#00e87a" stroke-width="1.5" marker-end="url(#arr-green)"/>
+<line x1="1534" y1="388" x2="1534" y2="422" stroke="#00e87a" stroke-width="1.8" marker-end="url(#arr-green)"/>
 
-<!-- Card: Recall eval -->
+<!-- RECALL EVAL -->
 <g filter="url(#glow-green)">
-  <rect x="1328" y="384" width="412" height="118" rx="8" fill="#07130e" stroke="#00e87a" stroke-width="1.4"/>
-  <rect x="1328" y="384" width="412" height="118" rx="8" fill="url(#card-fade)"/>
-  <rect x="1328" y="384" width="412" height="7"   rx="4" fill="#00e87a" opacity="0.8"/>
+  <rect x="1328" y="424" width="412" height="148" rx="9" fill="#070f0a" stroke="#00e87a" stroke-width="1.5"/>
+  <rect x="1328" y="424" width="412" height="148" rx="9" fill="url(#card-shine)"/>
+  <rect x="1328" y="424" width="412" height="8"   rx="5" fill="#00e87a" opacity="0.85"/>
 </g>
-<text x="1348" y="412" font-size="13" font-weight="700" fill="#dce8f5">Recall Eval  (synthetic labels)</text>
-<text x="1730" y="402" text-anchor="end" font-size="9" fill="#00e87a" opacity="0.7">evaluation.synthetic</text>
-<text x="1348" y="432" font-size="11" fill="#6a9ab8">Recall · Precision · F1 · PR-AUC  per model + ensemble</text>
-<text x="1348" y="450" font-size="10" fill="#4a7a96">PR-AUC random baseline = 0.05  (= anomaly rate)</text>
+<text x="1350" y="456" font-size="14" font-weight="700" fill="#e0eef8">Recall Eval</text>
+<text x="1732" y="446" text-anchor="end" font-size="9.5" fill="#00e87a" opacity="0.75">synthetic labels</text>
+<text x="1350" y="478" font-size="10.5" fill="#4a8a6a">PR-AUC random baseline = 0.05  (= anomaly rate)</text>
 
-<text x="1348" y="472" font-size="10.5" fill="#c8dff0"  font-weight="600">IForest</text>
-<text x="1436" y="472" font-size="10.5" fill="#6a9ab8">F1=0.133</text>
-<text x="1540" y="472" font-size="10.5" fill="#6a9ab8">PR-AUC=0.103</text>
+<!-- metrics rows -->
+<text x="1350" y="504" font-size="12" fill="#c0d8e8" font-weight="600">IForest</text>
+<text x="1460" y="504" font-size="11.5" fill="#6eaace">F1=0.133</text>
+<text x="1580" y="504" font-size="11.5" fill="#6eaace">PR-AUC=0.103</text>
 
-<text x="1348" y="490" font-size="10.5" fill="#00e87a" font-weight="600">LOF ★</text>
-<text x="1436" y="490" font-size="10.5" fill="#00e87a">F1=0.174</text>
-<text x="1540" y="490" font-size="10.5" fill="#00e87a">PR-AUC=0.123</text>
+<text x="1350" y="526" font-size="12" fill="#00e87a" font-weight="700">LOF ★</text>
+<text x="1460" y="526" font-size="11.5" fill="#00e87a">F1=0.174</text>
+<text x="1580" y="526" font-size="11.5" fill="#00e87a">PR-AUC=0.123</text>
 
-<text x="1348" y="508" font-size="10.5" fill="#c8dff0" font-weight="600">COPOD</text>
-<text x="1436" y="508" font-size="10.5" fill="#6a9ab8">F1=0.085</text>
-<text x="1540" y="508" font-size="10.5" fill="#6a9ab8">PR-AUC=0.082</text>
+<text x="1350" y="548" font-size="12" fill="#c0d8e8" font-weight="600">COPOD</text>
+<text x="1460" y="548" font-size="11.5" fill="#6eaace">F1=0.085</text>
+<text x="1580" y="548" font-size="11.5" fill="#6eaace">PR-AUC=0.082</text>
 
-<text x="1348" y="490" font-size="10.5" fill="#00e87a" font-weight="600">LOF ★</text>
+<text x="1350" y="570" font-size="12" fill="#c0d8e8" font-weight="600">ECOD</text>
+<text x="1460" y="570" font-size="11.5" fill="#6eaace">F1=0.099</text>
+<text x="1580" y="570" font-size="11.5" fill="#6eaace">PR-AUC=0.085</text>
 
-<!-- fix ECOD row -->
-<text x="1348" y="508" font-size="10.5" fill="#c8dff0" font-weight="600">COPOD</text>
-<text x="1436" y="508" font-size="10.5" fill="#6a9ab8">F1=0.085</text>
-<text x="1540" y="508" font-size="10.5" fill="#6a9ab8">PR-AUC=0.082</text>
+<line x1="1534" y1="572" x2="1534" y2="606" stroke="#a855f7" stroke-width="1.8" marker-end="url(#arr-purple)"/>
 
-<text x="1600" y="472" font-size="10.5" fill="#c8dff0" font-weight="600">ECOD</text>
-<text x="1648" y="472" font-size="10.5" fill="#6a9ab8">F1=0.099</text>
-
-<text x="1600" y="490" font-size="10.5" fill="#a855f7" font-weight="600">Ensemble</text>
-<text x="1680" y="490" font-size="10.5" fill="#a855f7">0.130</text>
-
-<line x1="1534" y1="502" x2="1534" y2="530" stroke="#a855f7" stroke-width="1.5" marker-end="url(#arr-purple)"/>
-
-<!-- Card: MLflow -->
+<!-- MLFLOW -->
 <g filter="url(#glow-purple)">
-  <rect x="1328" y="532" width="412" height="100" rx="8" fill="#100c18" stroke="#a855f7" stroke-width="1.4"/>
-  <rect x="1328" y="532" width="412" height="100" rx="8" fill="url(#card-fade)"/>
-  <rect x="1328" y="532" width="412" height="7"   rx="4" fill="#a855f7" opacity="0.8"/>
+  <rect x="1328" y="608" width="412" height="114" rx="9" fill="#0e0a1a" stroke="#a855f7" stroke-width="1.5"/>
+  <rect x="1328" y="608" width="412" height="114" rx="9" fill="url(#card-shine)"/>
+  <rect x="1328" y="608" width="412" height="8"   rx="5" fill="#a855f7" opacity="0.85"/>
 </g>
-<text x="1348" y="560" font-size="13" font-weight="700" fill="#dce8f5">MLflow Tracking</text>
-<text x="1730" y="550" text-anchor="end" font-size="9" fill="#a855f7" opacity="0.7">mlflow</text>
-<text x="1348" y="580" font-size="11" fill="#6a9ab8">experiment: b2b-anomaly-detection  ·  4 runs + ensemble</text>
-<text x="1348" y="598" font-size="11" fill="#6a9ab8">params: model · contamination · n_customers · n_features</text>
-<text x="1348" y="616" font-size="11" fill="#6a9ab8">metrics: recall · precision · f1 · pr_auc</text>
-<text x="1348" y="626" font-size="11" fill="#a855f7">artifacts: model.pkl  ·  conda.yaml  ·  MLmodel</text>
+<text x="1350" y="640" font-size="14" font-weight="700" fill="#e0eef8">MLflow Tracking</text>
+<text x="1732" y="630" text-anchor="end" font-size="9.5" fill="#a855f7" opacity="0.75">mlflow</text>
+<text x="1350" y="664" font-size="11.5" fill="#a888e0">experiment: b2b-anomaly-detection  ·  5 runs</text>
+<text x="1350" y="686" font-size="11.5" fill="#a888e0">params: model · contamination · n_customers</text>
+<text x="1350" y="708" font-size="11.5" fill="#a888e0">metrics: recall · precision · f1 · pr_auc</text>
 
 
-<!-- ═══ MODULE MAP ═══ -->
-<rect x="20" y="720" width="1720" height="120" rx="8" fill="#0a0f18" stroke="#1a3a52" stroke-width="1"/>
-<text x="880" y="746" text-anchor="middle" font-size="10" font-weight="700" fill="#5a8ab0" letter-spacing="2">MODULE MAP</text>
+<!-- ════════════════════════════════════════════════════════ MODULE MAP -->
+<rect x="16" y="804" width="1728" height="116" rx="9" fill="#090e18" stroke="#1a3a52" stroke-width="1.2"/>
+<text x="880" y="828" text-anchor="middle" font-size="10" font-weight="700" fill="#4a7a9a" letter-spacing="2.5">MODULE MAP</text>
 
-<rect x="40"   y="758" width="205" height="72" rx="6" fill="#060a10" stroke="#00d4ff" stroke-width="0.9"/>
-<text x="142"  y="778" text-anchor="middle" font-size="9.5" font-weight="700" fill="#00d4ff">anomaly_detection.data</text>
-<text x="142"  y="796" text-anchor="middle" font-size="9"   fill="#6a9ab8">loader.load_raw()</text>
-<text x="142"  y="812" text-anchor="middle" font-size="9"   fill="#6a9ab8">loader.clean()</text>
-<text x="142"  y="824" text-anchor="middle" font-size="9"   fill="#6a9ab8">→ cleaned DataFrame</text>
+<rect x="36"   y="836" width="205" height="74" rx="7" fill="#060a10" stroke="#00d4ff" stroke-width="1"/>
+<text x="138"  y="858" text-anchor="middle" font-size="9.5" font-weight="700" fill="#00d4ff">anomaly_detection.data</text>
+<text x="138"  y="876" text-anchor="middle" font-size="9.5" fill="#6eaace">load_raw()  ·  clean()</text>
+<text x="138"  y="896" text-anchor="middle" font-size="9.5" fill="#3a6a88">→ cleaned DataFrame</text>
 
-<rect x="258"  y="758" width="235" height="72" rx="6" fill="#060a10" stroke="#ffaa00" stroke-width="0.9"/>
-<text x="375"  y="778" text-anchor="middle" font-size="9.5" font-weight="700" fill="#ffaa00">anomaly_detection.features</text>
-<text x="375"  y="796" text-anchor="middle" font-size="9"   fill="#6a9ab8">engineer.build_customer_features()</text>
-<text x="375"  y="812" text-anchor="middle" font-size="9"   fill="#6a9ab8">BehavioralFeatureTransformer</text>
-<text x="375"  y="824" text-anchor="middle" font-size="9"   fill="#6a9ab8">→ 11-feature matrix</text>
+<rect x="252"  y="836" width="228" height="74" rx="7" fill="#060a10" stroke="#ffaa00" stroke-width="1"/>
+<text x="366"  y="858" text-anchor="middle" font-size="9.5" font-weight="700" fill="#ffaa00">anomaly_detection.features</text>
+<text x="366"  y="876" text-anchor="middle" font-size="9.5" fill="#c8a85a">build_customer_features()</text>
+<text x="366"  y="896" text-anchor="middle" font-size="9.5" fill="#3a6a88">→ 11-feature matrix</text>
 
-<rect x="506"  y="758" width="210" height="72" rx="6" fill="#060a10" stroke="#ff2d78" stroke-width="0.9"/>
-<text x="611"  y="778" text-anchor="middle" font-size="9.5" font-weight="700" fill="#ff2d78">anomaly_detection.models</text>
-<text x="611"  y="796" text-anchor="middle" font-size="9"   fill="#6a9ab8">detector.AnomalyDetectorSuite</text>
-<text x="611"  y="812" text-anchor="middle" font-size="9"   fill="#6a9ab8">IForest · LOF · COPOD · ECOD</text>
-<text x="611"  y="824" text-anchor="middle" font-size="9"   fill="#6a9ab8">→ labels · scores · metrics</text>
+<rect x="492"  y="836" width="205" height="74" rx="7" fill="#060a10" stroke="#ff2d78" stroke-width="1"/>
+<text x="594"  y="858" text-anchor="middle" font-size="9.5" font-weight="700" fill="#ff2d78">anomaly_detection.models</text>
+<text x="594"  y="876" text-anchor="middle" font-size="9.5" fill="#cc7aaa">AnomalyDetectorSuite</text>
+<text x="594"  y="896" text-anchor="middle" font-size="9.5" fill="#3a6a88">IForest · LOF · COPOD · ECOD</text>
 
-<rect x="729"  y="758" width="300" height="72" rx="6" fill="#060a10" stroke="#00e87a" stroke-width="0.9"/>
-<text x="879"  y="778" text-anchor="middle" font-size="9.5" font-weight="700" fill="#00e87a">anomaly_detection.evaluation</text>
-<text x="879"  y="796" text-anchor="middle" font-size="9"   fill="#6a9ab8">synthetic.inject_anomalies()</text>
-<text x="879"  y="812" text-anchor="middle" font-size="9"   fill="#6a9ab8">hitl.simulate_hitl_review()</text>
-<text x="879"  y="824" text-anchor="middle" font-size="9"   fill="#6a9ab8">psi.monitor_psi()</text>
+<rect x="710"  y="836" width="290" height="74" rx="7" fill="#060a10" stroke="#00e87a" stroke-width="1"/>
+<text x="855"  y="858" text-anchor="middle" font-size="9.5" font-weight="700" fill="#00e87a">anomaly_detection.evaluation</text>
+<text x="855"  y="876" text-anchor="middle" font-size="9.5" fill="#6ecca0">inject · hitl · psi</text>
+<text x="855"  y="896" text-anchor="middle" font-size="9.5" fill="#3a6a88">→ recall · precision · drift</text>
 
-<rect x="1042" y="758" width="230" height="72" rx="6" fill="#060a10" stroke="#3a5a78" stroke-width="0.9"/>
-<text x="1157" y="778" text-anchor="middle" font-size="9.5" font-weight="700" fill="#c8dff0">anomaly_detection.visualization</text>
-<text x="1157" y="796" text-anchor="middle" font-size="9"   fill="#6a9ab8">plots.plot_pca_scatter()</text>
-<text x="1157" y="812" text-anchor="middle" font-size="9"   fill="#6a9ab8">plots.plot_model_comparison()</text>
-<text x="1157" y="824" text-anchor="middle" font-size="9"   fill="#6a9ab8">+ 5 more plot functions</text>
+<rect x="1014" y="836" width="224" height="74" rx="7" fill="#060a10" stroke="#3a5a88" stroke-width="1"/>
+<text x="1126" y="858" text-anchor="middle" font-size="9.5" font-weight="700" fill="#c0d8f0">anomaly_detection.viz</text>
+<text x="1126" y="876" text-anchor="middle" font-size="9.5" fill="#6eaace">7 diagnostic plots</text>
+<text x="1126" y="896" text-anchor="middle" font-size="9.5" fill="#3a6a88">auto-saved to assets/</text>
 
-<rect x="1286" y="758" width="180" height="72" rx="6" fill="#060a10" stroke="#a855f7" stroke-width="0.9"/>
-<text x="1376" y="778" text-anchor="middle" font-size="9.5" font-weight="700" fill="#a855f7">config / scripts</text>
-<text x="1376" y="796" text-anchor="middle" font-size="9"   fill="#6a9ab8">config.yaml</text>
-<text x="1376" y="812" text-anchor="middle" font-size="9"   fill="#6a9ab8">scripts/run_pipeline.py</text>
-<text x="1376" y="824" text-anchor="middle" font-size="9"   fill="#6a9ab8">notebooks/ · tests/</text>
+<rect x="1252" y="836" width="200" height="74" rx="7" fill="#060a10" stroke="#a855f7" stroke-width="1"/>
+<text x="1352" y="858" text-anchor="middle" font-size="9.5" font-weight="700" fill="#a855f7">config / infra</text>
+<text x="1352" y="876" text-anchor="middle" font-size="9.5" fill="#a888e0">config.yaml  ·  MLflow</text>
+<text x="1352" y="896" text-anchor="middle" font-size="9.5" fill="#3a6a88">30 tests  ·  pip install -e .</text>
 
-<rect x="1479" y="758" width="261" height="72" rx="6" fill="#060a10" stroke="#1a3a52" stroke-width="0.9"/>
-<text x="1609" y="778" text-anchor="middle" font-size="9.5" font-weight="700" fill="#5a8ab0">install</text>
-<text x="1609" y="796" text-anchor="middle" font-size="9"   fill="#6a9ab8">conda env create -f environment.yml</text>
-<text x="1609" y="812" text-anchor="middle" font-size="9"   fill="#6a9ab8">pip install -e ".[dev]"</text>
-<text x="1609" y="824" text-anchor="middle" font-size="9"   fill="#6a9ab8">pytest  ·  30 tests passing</text>
+<rect x="1466" y="836" width="278" height="74" rx="7" fill="#060a10" stroke="#1a3a52" stroke-width="1"/>
+<text x="1605" y="858" text-anchor="middle" font-size="9.5" font-weight="700" fill="#4a7a9a">setup</text>
+<text x="1605" y="876" text-anchor="middle" font-size="9.5" fill="#4a7a9a">conda env create -f environment.yml</text>
+<text x="1605" y="896" text-anchor="middle" font-size="9.5" fill="#2a5a72">pip install -e ".[dev]"  ·  pytest</text>
 
 
-<!-- ═══ LEGEND BAR ═══ -->
-<rect x="20" y="856" width="1720" height="40" rx="6" fill="#0a0f18" stroke="#1a3a52" stroke-width="1"/>
+<!-- ════════════════════════════════════════════════════════ LEGEND -->
+<rect x="16" y="934" width="1728" height="44" rx="7" fill="#090e18" stroke="#1a3a52" stroke-width="1"/>
 
-<rect x="140" y="870" width="12" height="12" rx="2" fill="#00d4ff"/>
-<text x="158" y="881" font-size="10" fill="#6a9ab8">ingest</text>
+<rect x="120" y="950" width="13" height="13" rx="2" fill="#00d4ff"/>
+<text x="140" y="962" font-size="11" fill="#6eaace">ingest</text>
 
-<rect x="240" y="870" width="12" height="12" rx="2" fill="#ffaa00"/>
-<text x="258" y="881" font-size="10" fill="#6a9ab8">features</text>
+<rect x="230" y="950" width="13" height="13" rx="2" fill="#ffaa00"/>
+<text x="250" y="962" font-size="11" fill="#c8a85a">features</text>
 
-<rect x="360" y="870" width="12" height="12" rx="2" fill="#ff2d78"/>
-<text x="378" y="881" font-size="10" fill="#6a9ab8">models</text>
+<rect x="360" y="950" width="13" height="13" rx="2" fill="#ff2d78"/>
+<text x="380" y="962" font-size="11" fill="#cc7aaa">models</text>
 
-<rect x="470" y="870" width="12" height="12" rx="2" fill="#a855f7"/>
-<text x="488" y="881" font-size="10" fill="#6a9ab8">ensemble</text>
+<rect x="478" y="950" width="13" height="13" rx="2" fill="#a855f7"/>
+<text x="498" y="962" font-size="11" fill="#a888e0">ensemble</text>
 
-<rect x="600" y="870" width="12" height="12" rx="2" fill="#00e87a"/>
-<text x="618" y="881" font-size="10" fill="#6a9ab8">evaluation</text>
+<rect x="620" y="950" width="13" height="13" rx="2" fill="#00e87a"/>
+<text x="640" y="962" font-size="11" fill="#6ecca0">evaluation</text>
 
-<rect x="740" y="870" width="12" height="12" rx="2" fill="#3a5a78"/>
-<text x="758" y="881" font-size="10" fill="#6a9ab8">sklearn / scaling</text>
+<rect x="770" y="950" width="13" height="13" rx="2" fill="#3a5a88"/>
+<text x="790" y="962" font-size="11" fill="#6eaace">sklearn</text>
 
-<line x1="900" y1="876" x2="940" y2="876" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="4,3"/>
-<text x="950" y="881" font-size="10" fill="#6a9ab8">data flow</text>
+<line x1="908" y1="957" x2="952" y2="957" stroke="#00d4ff" stroke-width="1.8" stroke-dasharray="4,4"/>
+<text x="962" y="962" font-size="11" fill="#4a7a9a">data flow</text>
 
-<line x1="1040" y1="876" x2="1080" y2="876" stroke="#ff2d78" stroke-width="1.5" stroke-dasharray="4,3"/>
-<text x="1090" y="881" font-size="10" fill="#6a9ab8">scores feed</text>
+<line x1="1072" y1="957" x2="1116" y2="957" stroke="#a855f7" stroke-width="1.8" stroke-dasharray="4,4"/>
+<text x="1126" y="962" font-size="11" fill="#4a7a9a">scores</text>
 
-<text x="1740" y="881" text-anchor="end" font-size="9" fill="#2a4a62">anomaly_detection v0.1.0  ·  IForest · LOF · COPOD · ECOD</text>
+<text x="1744" y="962" text-anchor="end" font-size="10" fill="#2a4a62">anomaly_detection v0.1.0</text>
 
 </svg>
 </body>
